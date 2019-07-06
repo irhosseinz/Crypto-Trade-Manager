@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>{{title}}</title>
+<title>{{title}} - {{title2}}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="">
 <meta name="keywords" content="">
@@ -32,9 +32,33 @@ $( document ).ready(function(){
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
+{{#ifEqual page 'home'}}
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      </li>
+{{else}}
       <li class="nav-item">
         <a class="nav-link" href="/">Home</a>
       </li>
+{{/ifEqual}}
+{{#ifEqual page 'login'}}
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Login <span class="sr-only">(current)</span></a>
+      </li>
+{{else}}
+      <li class="nav-item">
+        <a class="nav-link" href="/login.html">Login</a>
+      </li>
+{{/ifEqual}}
+{{#ifEqual page 'register'}}
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Register <span class="sr-only">(current)</span></a>
+      </li>
+{{else}}
+      <li class="nav-item">
+        <a class="nav-link" href="/register.html">Register</a>
+      </li>
+{{/ifEqual}}
     </ul>
   </div>
 </nav>

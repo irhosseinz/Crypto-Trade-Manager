@@ -24,7 +24,8 @@ $( document ).ready(function(){
 				error.insertAfter(element);
 			}
 		}
-		,rules:rules,messages:msgs
+		,rules:{username:{required:true,remote:'exist.html'}}
+		,messages:{username:{remote:'This username is taken!'}}
 		,submitHandler: function(form) {
 			form.submit();
 		}

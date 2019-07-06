@@ -1,5 +1,7 @@
 module.exports.start=function(){
 	global.logins={};
+	
+	global.cached={};
 }
 module.exports.set=function(category,name,value){
 	global[category][name]=value;

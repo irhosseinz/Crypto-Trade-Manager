@@ -7,7 +7,7 @@ User.prototype.get_cookie=function(){
 	if(!this.is_authorized())
 		return false;
 	var cookie=global.tools.randomText(30);
-	global.cache.set('logins',user,{cookie:cookie,user:this});
+	global.cache.set('logins',this.logined._id,{cookie:cookie,user:this});
 	return this.logined._id+"_"+cookie;
 }
 User.prototype.set_login=function(data){
@@ -28,14 +28,21 @@ User.prototype.set_login=function(data){
 }
 User.prototype.register=function(username,password,callback){
 	var self=this;
+	if(!username || !password){
+		callback('Invalid Input');
+		return;
+	}
 	global.db.newUser(username,password,function(err,data){
 		if(err){
 			if(callback){
-				callback(err);
+				if(err.errno==19){
+					callback('Username already registered');
+				}else callback(err);
 			}
 			return;
 		}
 		self.set_login({username:username,_id:data});
+		callback(false,data);
 	});
 }
 User.prototype.login=function(username,password,callback){
@@ -52,11 +59,12 @@ User.prototype.login=function(username,password,callback){
 			return;
 		}
 		self.set_login(data);
+		callback(false,data);
 	})
 }
-User.prototype.add_api=function(name,data,callback){
+User.prototype.add_api=function(name,market,data,callback){
 	var self=this;
-	global.db.saveApi(self.logined._id,name,data,function(err,id){
+	global.db.saveApi(self.logined._id,market,name,data,function(err,id){
 		if(err){
 			if(callback){
 				callback(err);
@@ -65,7 +73,7 @@ User.prototype.add_api=function(name,data,callback){
 		}
 		if(callback)
 			callback(false,id);
-		self.apis.push({_id:id,name:name,data:data});
+		self.apis.push({_id:id,name:name,market:market,data:data});
 	})
 }
 User.prototype.delete_api=function(id){

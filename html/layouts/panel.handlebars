@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/img/favicon.png">
+    <title>{{title}} - {{title2}}</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/dashboard.css" rel="stylesheet">
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/bootstrap.bundle.js"></script>
+	 <script src="/js/jquery.validate.min.js"></script>
+<script type="text/javascript">
+$( document ).ready(function(){
+	
+});
+</script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+      <a class="navbar-brand col-sm-3 col-md-2 col-4 mr-0" href="#">{{title}}</a>
+      <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="login.html?logout">Sign out</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 col-sm-1 col-1 d-inline d-md-block bg-light sidebar" style="top:48px">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+{{#ifEqual page 'panel'}}
+              <li class="nav-item">
+                <a class="nav-link active">
+                  <span data-feather="command"></span>
+                  <span class="d-none d-md-inline">Panel <span class="sr-only">(current)</span></span>
+                </a>
+              </li>
+{{else}}
+              <li class="nav-item">
+                <a class="nav-link" href="panel.html">
+                  <span data-feather="command"></span>
+                  <span class="d-none d-md-inline">Panel</span>
+                </a>
+              </li>
+{{/ifEqual}}
+{{#ifEqual page 'exchanger'}}
+              <li class="nav-item">
+                <a class="nav-link active">
+                  <span data-feather="monitor"></span>
+                  <span class="d-none d-md-inline">Exchanger <span class="sr-only">(current)</span></span>
+                </a>
+              </li>
+{{else}}
+              <li class="nav-item">
+                <a class="nav-link" href="exchanger.html">
+                  <span data-feather="command"></span>
+                  <span class="d-none d-md-inline">Exchanger</span>
+                </a>
+              </li>
+{{/ifEqual}}
+            </ul>
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-9 offset-md-2 col-sm-11 offset-sm-1 col-11 offset-1 pt-3 px-4">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+<div class="container">
+{{#if error}}
+<div class="alert alert-danger" role="alert">{{error}}</div>
+{{/if}}
+{{#if success}}
+<div class="alert alert-success" role="alert">{{success}}</div>
+{{/if}}
+{{{body}}}
+</div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <script src="js/feather.min.js"></script>
+    <script>
+      feather.replace()
+    </script>
+<hr>
+<footer>
+<p class="text-center text-ltr engFont">&copy; <a href="http://h.sandbad.biz/TradeTracker/" target="_blank">TradeTracker</a></p>
+</footer>
+  </body>
+</html>

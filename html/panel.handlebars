@@ -1,0 +1,68 @@
+<script type="text/javascript">
+$( document ).ready(function(){
+	$("#form").validate({
+		focusInvalid: false,onkeyup: false,
+		errorClass: "is-invalid",validClass: "is-valid",
+		errorPlacement: function(error, element) {
+			if (element.parent().hasClass('input-group')) {
+				error.insertAfter(element.parent());
+			} else if (element.attr("name") == "accept"){
+				error.insertAfter("#accept2");
+			}else{
+				error.insertAfter(element);
+			}
+		}
+	});
+	$('[data-toggle="popover"]').popover();
+});
+</script>
+<h1>Active Trades</h1>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Exchange</th>
+      <th scope="col">Symbol</th>
+      <th scope="col">Price</th>
+      <th scope="col">Amount</th>
+      <th scope="col">Status</th>
+    </tr>
+  </thead>
+  <tbody>
+		{{#list}}
+		<tr>
+			<th scope="row">{{_id}}</th>
+			<td>{{market}}</td>
+			<td>{{pair}}</td>
+			<td>{{formatPrice track.[0]}}</td>
+			<td>{{formatPrice amount}}</td>
+			<td>{{status}}</td>
+		</tr>
+		{{/list}}
+  </tbody>
+</table>
+<form method="post" action="panel.html" id="form">
+	<div class="form-group">
+		<label for="exchanger">Exchanger Name</label>
+		<select class="form-control" id="exchanger" name="api" required>
+    		<option></option>
+		{{#apis}}
+			<option value="{{_id}}">{{name}}</option>
+		{{/apis}}
+		</select>
+	</div>
+	<div class="form-group">
+		<label for="pair">Pair</label>
+		<input type="text" class="form-control" id="pair" name="pair" required/>
+	</div>
+	<div class="form-group">
+		<label for="price">Price</label>
+		<input type="number" class="form-control" id="price" name="price" step="any" required/>
+	</div>
+	<div class="form-group">
+		<label for="amount">Amount</label>
+		<input type="number" class="form-control" id="amount" name="amount" required/>
+	</div>
+	<input type="submit" class="btn btn-success" name="buy" value="BUY"/>
+	<input type="submit" class="btn btn-danger" name="sell" value="SELL"/>
+</form>

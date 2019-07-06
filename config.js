@@ -1,11 +1,14 @@
 module.exports.APIS={
 	bittrex:{
-		keys:['key','secret']
+		name:'Bittrex'
+		,keys:['key','secret']
 	}
 };
 
 module.exports.title='Trade Tracker';
 
+
+module.exports.cookie_life=900000;
 
 module.exports.port=1040;
 

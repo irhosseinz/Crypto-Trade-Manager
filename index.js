@@ -22,17 +22,36 @@ global.tools = require('./tools.js');
 
 
 var app = express();
+
 app.use(cookieParser());
+
+var hbs = exphbs.create({
+	helpers: {
+		ifEqual: function(v1, v2, options) {
+					if(v1 === v2) {
+						return options.fn(this);
+					}
+						return options.inverse(this);
+					}
+		,formatPrice: function(v) {
+						return parseFloat(v).toFixed(12)
+					}
+	}
+});
 app.use(express.urlencoded({extended:true}));
-app.engine('handlebars', exphbs());
+app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 app.set('views', __dirname+'/html/');
+
 var path = require('path');
 app.get('/css/:file', function(req, res) {
 	res.sendFile(path.join(__dirname + '/html/css/'+req.params.file));
 });
 app.get('/js/:file', function(req, res) {
 	res.sendFile(path.join(__dirname + '/html/js/'+req.params.file));
+});
+app.get('/img/:file', function(req, res) {
+	res.sendFile(path.join(__dirname + '/html/img/'+req.params.file));
 });
 app.get('/', function(req, res) {
 	res.sendFile(path.join(__dirname + '/html/index.html'));
@@ -50,7 +69,6 @@ app.get('/:page.html', function(req, res) {
 });
 app.post('/:page.html', function(req, res) {
 	var p=new panel(req,res);
-		p.error(500,'65465');return;
 	var cookie=(req.cookies?req.cookies.login:null);
 	p.authorize(cookie);
 	try{

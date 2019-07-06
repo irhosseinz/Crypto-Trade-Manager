@@ -1,0 +1,61 @@
+<script type="text/javascript">
+$( document ).ready(function(){
+	$("#form").validate({
+		focusInvalid: false,onkeyup: false,
+		errorClass: "is-invalid",validClass: "is-valid",
+		errorPlacement: function(error, element) {
+			if (element.parent().hasClass('input-group')) {
+				error.insertAfter(element.parent());
+			} else if (element.attr("name") == "accept"){
+				error.insertAfter("#accept2");
+			}else{
+				error.insertAfter(element);
+			}
+		}
+	});
+	$('[data-toggle="popover"]').popover();
+});
+</script>
+<h1>Your Apis</h1>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Status</th>
+      <th scope="col">Operation</th>
+    </tr>
+  </thead>
+  <tbody>
+		{{#list}}
+		<tr>
+			<th scope="row">{{_id}}</th>
+			<td>{{name}}</td>
+			<td>{{active}}</td>
+			<td></td>
+		</tr>
+		{{/list}}
+  </tbody>
+</table>
+<form method="post" action="exchanger.html" id="form">
+	<div class="form-group">
+		<label for="exchanger">Exchanger Name</label>
+		<select class="form-control" id="exchanger" name="exchanger" onchange="$('.exchangerIn').hide();$('.'+this.value).show();" required>
+    		<option></option>
+		{{#apis}}
+			<option value="{{key}}">{{name}}</option>
+		{{/apis}}
+		</select>
+	</div>
+	<div class="form-group">
+		<label for="name">Name</label>
+		<input type="text" class="form-control" id="name" name="name" placeholder="(Optional)">
+	</div>
+	{{#inputs}}
+	<div class="form-group exchangerIn {{key}}">
+		<label for="{{name}}">{{title}}</label>
+		<input type="text" class="form-control" id="{{name}}" name="{{name}}" placeholder="{{title}}" required>
+	</div>
+	{{/inputs}}
+	<button type="submit" class="btn btn-primary">Add Api</button>
+</form>

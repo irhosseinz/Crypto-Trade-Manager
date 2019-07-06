@@ -15,6 +15,7 @@ function DB(){
 			+"_id integer primary key autoincrement"
 			+", user integer not null"
 			+", name text not null"
+			+", market text not null"
 			+", date integer not null"
 			+", data text null"
 			+", active integer default 1"
@@ -22,11 +23,11 @@ function DB(){
 		db.run("CREATE TABLE IF NOT EXISTS tracks ("
 			+"_id integer primary key autoincrement"
 			+", user integer not null"
+			+", api integer not null"
 			+", market text not null"
 			+", pair text not null"
 			+", date integer not null"
 			+", amount real not null"
-			+", price real not null"
 			+", track text not null"
 			+")");
 		db.run("CREATE TABLE IF NOT EXISTS apis ("
@@ -59,14 +60,15 @@ DB.prototype.newUser=function(username,password,callback){
 	stmt.run(username.toLowerCase(),new Date().getTime(),password,function(err){
 				if(err){
 					callback(err);
+					console.log(err);
 				}else
 					callback(false,this.lastID);
 			});
 	stmt.finalize();
 };
-DB.prototype.saveApi=function(user,name,data,callback){
-	var stmt=this.db.prepare("INSERT INTO apis(name,date,data) VALUES (?,?,?)");
-	stmt.run(name,new Date().getTime(),JSON.stringify(data),function(err){
+DB.prototype.saveApi=function(user,market,name,data,callback){
+	var stmt=this.db.prepare("INSERT INTO apis(user,name,market,date,data) VALUES (?,?,?,?,?)");
+	stmt.run(user,name,market,new Date().getTime(),JSON.stringify(data),function(err){
 				if(err && callback){
 					callback(err);
 				}else if(callback)
@@ -75,8 +77,8 @@ DB.prototype.saveApi=function(user,name,data,callback){
 	stmt.finalize();
 };
 DB.prototype.saveTrack=function(data,callback){
-	var stmt=this.db.prepare("INSERT INTO tracks(user,market,pair,date,amount,price,track) VALUES (?,?,?,?,?,?,?)");
-	stmt.run(data.user,data.market,data.pair,new Date().getTime(),data.amount,data.price,JSON.stringify(data),function(err){
+	var stmt=this.db.prepare("INSERT INTO tracks(user,api,market,pair,date,amount,track) VALUES (?,?,?,?,?,?,?)");
+	stmt.run(data.user,data.api,data.market,data.pair,new Date().getTime(),data.amount,JSON.stringify(data.track),function(err){
 				if(err){
 					callback(err);
 				}else
@@ -122,6 +124,13 @@ DB.prototype.getApis=function(user,callback){
 //			console.log("DBgetOrders-E:"+error);
 			return;
 		}
+		for(var i in rows){
+			try{
+				rows[i].data=JSON.parse(rows[i].data);
+			}catch(e){
+				rows[i].data=[];
+			}
+		}
 		callback(false,rows);
 	});
 };
@@ -131,6 +140,13 @@ DB.prototype.getTracks=function(user,callback){
 			callback(error);
 //			console.log("DBgetOrders-E:"+error);
 			return;
+		}
+		for(var i in rows){
+			try{
+				rows[i].track=JSON.parse(rows[i].track);
+			}catch(e){
+				rows[i].track=[];
+			}
 		}
 		callback(false,rows);
 	});

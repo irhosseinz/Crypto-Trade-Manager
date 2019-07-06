@@ -1,37 +1,13 @@
-var User=function(username,password){
-	this.username=username;
-	this.password=password;
-	
-	this.login(username,password);
+var User=function(){
 }
 User.prototype.is_authorized=function(){
 	return this.logined?true:false;
-}
-User.prototype.authorize=function(cookie){
-	if(!cookie){
-		return false;
-	}
-	var dd=cookie.split('_');
-	if(dd.length<2)
-		return false;
-	var user=parseInt(dd[0]);
-	if(this.is_authorized())
-		return true;
-	if(!global.cache.isset('logins',user)){
-		return false;
-	}
-	var d=global.cache.get('logins',user);
-	if(dd[1]===d.cookie){
-		this.set_login(d.data)l
-		return true;
-	}
-	return false;
 }
 User.prototype.get_cookie=function(){
 	if(!this.is_authorized())
 		return false;
 	var cookie=global.tools.randomText(30);
-	global.cache.set('logins',user,{cookie:cookie,data:this.logined});
+	global.cache.set('logins',user,{cookie:cookie,user:this});
 	return this.logined._id+"_"+cookie;
 }
 User.prototype.set_login=function(data){

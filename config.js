@@ -4,6 +4,9 @@ module.exports.APIS={
 	}
 };
 
+module.exports.title='Trade Tracker';
+
+
 module.exports.port=1040;
 
 module.exports.cycle_second=10;

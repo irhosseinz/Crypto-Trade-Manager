@@ -14,6 +14,9 @@ global.db=new db();
 global.cache = require('./cache.js');
 global.cache.start();
 
+var m=require('./tracker_manager.js');
+global.manager = new m();
+					console.log(global.manager);
 global.tools = require('./tools.js');
 
 //process.on('SIGINT', function() {
@@ -35,6 +38,10 @@ var hbs = exphbs.create({
 					}
 		,formatPrice: function(v) {
 						return parseFloat(v).toFixed(12)
+					}
+		,date: function(t) {
+						var d=new Date(parseInt(t));
+						return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
 					}
 	}
 });

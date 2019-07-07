@@ -15,6 +15,11 @@ $( document ).ready(function(){
 	});
 	$('[data-toggle="popover"]').popover();
 });
+function dl(market,pair,id){
+	$.post("panel.html",'market='+market+'&pair='+pair+'&remove='+id,function( data ) {
+		$('#item'+id).hide();
+	});
+}
 </script>
 <h1>Active Trades</h1>
 <table class="table table-striped">
@@ -26,17 +31,19 @@ $( document ).ready(function(){
       <th scope="col">Price</th>
       <th scope="col">Amount</th>
       <th scope="col">Status</th>
+      <th scope="col"></th>
     </tr>
   </thead>
   <tbody>
 		{{#list}}
-		<tr>
+		<tr id="item{{_id}}">
 			<th scope="row">{{_id}}</th>
 			<td>{{market}}</td>
 			<td>{{pair}}</td>
 			<td>{{formatPrice track.[0]}}</td>
 			<td>{{formatPrice amount}}</td>
 			<td>{{status}}</td>
+			<td><button class="btn btn-danger" onclick="dl('{{market}}','{{pair}}',{{_id}})">DELETE</button></td>
 		</tr>
 		{{/list}}
   </tbody>

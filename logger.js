@@ -8,7 +8,7 @@ module.exports.log=function(text,level){
 		host: 'api.telegram.org',
 		port: 443,
 		method: 'POST',
-		path: '/bot653320720:AAHARL45p-tYPb25nnhiiMp5vdm_KP6hM5g/sendMessage'
+		path: '/bot111/sendMessage'
 		,headers:headers
 	};
 	var req = https.request(options, function(res) {

@@ -15,6 +15,11 @@ $( document ).ready(function(){
 	});
 	$('[data-toggle="popover"]').popover();
 });
+function dl(id){
+	$.post("exchanger.html",'remove='+id,function( data ) {
+		$('#item'+id).hide();
+	});
+}
 </script>
 <h1>Your Apis</h1>
 <table class="table table-striped">
@@ -23,16 +28,16 @@ $( document ).ready(function(){
       <th scope="col">#</th>
       <th scope="col">Name</th>
       <th scope="col">Status</th>
-      <th scope="col">Operation</th>
+      <th scope="col"></th>
     </tr>
   </thead>
   <tbody>
 		{{#list}}
-		<tr>
+		<tr id="item{{_id}}">
 			<th scope="row">{{_id}}</th>
 			<td>{{name}}</td>
 			<td>{{active}}</td>
-			<td></td>
+			<td><button class="btn btn-danger" onclick="dl({{_id}})">DELETE</button></td>
 		</tr>
 		{{/list}}
   </tbody>

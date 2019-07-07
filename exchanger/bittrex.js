@@ -23,15 +23,17 @@ Exchange.prototype.get_order=function(id,callback){
 	this.request('/v3/orders/'+id,'GET','',callback);
 }
 Exchange.prototype.symbol=function(pair){
+	if(typeof pair == 'string')
+		return pair;
 	return pair.join('-');
 }
-Exchange.prototype.order=function(data,callback){
+Exchange.prototype.order_market=function(data,callback){
 	var d={
 		"marketSymbol": data.pair,
 		"direction": (data.buy?'BUY':'SELL'),
-		"type": "LIMIT",
+		"type": "MARKET",
 		"quantity": parseFloat(data.amount),
-		"limit": parseFloat(data.price),
+//		"limit": parseFloat(data.price),
 		"timeInForce": "GOOD_TIL_CANCELLED"
 		};
 //   if(data.id){
@@ -46,15 +48,17 @@ Exchange.prototype.request=function(uri,method,content,callback){
 	const https = require('https');
 	var timestamp=new Date().getTime();
 	var headers={
-			'Api-Key':this.api.key
-			,'Api-Timestamp':timestamp
+			'Api-Timestamp':timestamp
 			,'Api-Content-Hash':CryptoJS.SHA512(content).toString(CryptoJS.enc.Hex)
 		};
+	if(this.api){
+		headers['Api-Key']=this.api.key;
+		var preSign = [timestamp, 'https://'+this.domain+uri, method, headers['Api-Content-Hash'], ''].join('');
+		headers['Api-Signature']=CryptoJS.HmacSHA512(preSign
+				, this.api.secret).toString(CryptoJS.enc.Hex);
+	}
 	if(content)
 		headers['Content-Type']='application/json';
-	var preSign = [timestamp, 'https://'+this.domain+uri, method, headers['Api-Content-Hash'], ''].join('');
-	headers['Api-Signature']=CryptoJS.HmacSHA512(preSign
-			, this.api.secret).toString(CryptoJS.enc.Hex);
 	var options = {
 		host: this.domain,
 		port: 443,

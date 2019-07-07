@@ -37,14 +37,14 @@ $( document ).ready(function(){
 {{#ifEqual page 'panel'}}
               <li class="nav-item">
                 <a class="nav-link active">
-                  <span data-feather="command"></span>
+                  <span data-feather="monitor"></span>
                   <span class="d-none d-md-inline">Panel <span class="sr-only">(current)</span></span>
                 </a>
               </li>
 {{else}}
               <li class="nav-item">
                 <a class="nav-link" href="panel.html">
-                  <span data-feather="command"></span>
+                  <span data-feather="monitor"></span>
                   <span class="d-none d-md-inline">Panel</span>
                 </a>
               </li>
@@ -52,7 +52,7 @@ $( document ).ready(function(){
 {{#ifEqual page 'exchanger'}}
               <li class="nav-item">
                 <a class="nav-link active">
-                  <span data-feather="monitor"></span>
+                  <span data-feather="command"></span>
                   <span class="d-none d-md-inline">Exchanger <span class="sr-only">(current)</span></span>
                 </a>
               </li>
@@ -61,6 +61,21 @@ $( document ).ready(function(){
                 <a class="nav-link" href="exchanger.html">
                   <span data-feather="command"></span>
                   <span class="d-none d-md-inline">Exchanger</span>
+                </a>
+              </li>
+{{/ifEqual}}
+{{#ifEqual page 'trades'}}
+              <li class="nav-item">
+                <a class="nav-link active">
+                  <span data-feather="dollar-sign"></span>
+                  <span class="d-none d-md-inline">Trades <span class="sr-only">(current)</span></span>
+                </a>
+              </li>
+{{else}}
+              <li class="nav-item">
+                <a class="nav-link" href="trades.html">
+                  <span data-feather="dollar-sign"></span>
+                  <span class="d-none d-md-inline">Trades</span>
                 </a>
               </li>
 {{/ifEqual}}

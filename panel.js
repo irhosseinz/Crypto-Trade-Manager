@@ -99,7 +99,6 @@ Panel.prototype.open_panel=function(page,data){
 			pData.apis=[];
 			for(var i in this.user.apis){
 				var a=this.user.apis[i];
-				console.log(a);
 				pData.apis.push({_id:a._id+"_"+a.market,name:a.name+" ("+a.market+")"});
 			}
 			if(data && data.api){
@@ -110,6 +109,7 @@ Panel.prototype.open_panel=function(page,data){
 					,pair:data.pair
 					,amount:data.amount
 					,track:[parseFloat(data.price)]
+					,action:(data.buy?'BUY':'SELL')
 				};
 				this.user.add_tracker(d,function(error,id){
 					pData.list=self.user.tracks;
@@ -119,7 +119,14 @@ Panel.prototype.open_panel=function(page,data){
 					}else{
 						self.res.render('panel',pData);
 					}
+					console.log(global.manager);
+					global.manager.add_tracker(d.market,d.pair,id,d.track,0);
 				});
+				return;
+			}else if(data && data.remove){
+				global.manager.remove_tracker(data.market,data.pair,data.remove);
+				this.user.delete_track(data.remove);
+				this.res.end('ok');
 				return;
 			}
 			pData.list=this.user.tracks;
@@ -146,6 +153,10 @@ Panel.prototype.open_panel=function(page,data){
 					}
 				});
 				return;
+			}else if(data && data.remove){
+				this.user.delete_api(data.remove);
+				this.res.end('ok');
+				return;
 			}
 			pData.list=this.user.apis;
 			pData.apis=[];
@@ -158,6 +169,23 @@ Panel.prototype.open_panel=function(page,data){
 				}
 			}
 			this.res.render('exchanger',pData);
+			break;
+		case 'trades':
+			pData.title2='Trades';
+			pData.layout='panel';
+			if(!this.is_authorized()){
+				this.res.redirect('login.html');
+				break;
+			}
+			this.user.get_orders(function(err,data){
+				if(err){
+					pData.error=err;
+					self.res.render('trades',pData);
+					return;
+				}
+				pData.list=data;
+				self.res.render('trades',pData);
+			});
 			break;
 		case 'exist':
 			self.res.type('text');

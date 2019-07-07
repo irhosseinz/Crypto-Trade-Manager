@@ -79,10 +79,22 @@ User.prototype.add_api=function(name,market,data,callback){
 User.prototype.delete_api=function(id){
 	var self=this;
 	global.db.deleteApi(id,self.logined._id);
+	for(var i in this.apis){
+		if(this.apis[i]._id==id){
+			this.apis.splice(i,1);
+			break;
+		}
+	}
 }
 User.prototype.delete_track=function(id){
 	var self=this;
 	global.db.deleteTrack(id,self.logined._id);
+	for(var i in this.tracks){
+		if(this.tracks[i]._id==id){
+			this.tracks.splice(i,1);
+			break;
+		}
+	}
 }
 User.prototype.add_tracker=function(data,callback){
 	var self=this;
@@ -100,5 +112,8 @@ User.prototype.add_tracker=function(data,callback){
 		data._id=id;
 		self.tracks.push(data);
 	});
+}
+User.prototype.get_orders=function(callback){
+	global.db.getOrders(this.logined._id,callback);
 }
 module.exports=User;

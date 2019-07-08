@@ -2,6 +2,12 @@ var Tracker=function(){
 	this.trackers={};
 	console.log("STARTING TrackerManager at: ("+new Date()+") ");
 	this.load_trackers();
+	
+	global.exchanges={};
+	for(var i in global.config.APIS){
+		var e=require('./exchanger/'+i+'.js');
+		global.exchanges[i]=new e();
+	}
 }
 Tracker.prototype.get_key=function(market,pair){
 	return market+'_'+pair;
@@ -43,7 +49,7 @@ Tracker.prototype.start=function(market,pair){
 		return this.trackers[key];
 	}
 	var t=require('./tracker.js');
-	this.trackers[key]=new t(market,pair,this.callback);
+	this.trackers[key]=new t(global.exchanges[market],pair,this.callback);
 	this.trackers[key].start();
 	return this.trackers[key];
 }

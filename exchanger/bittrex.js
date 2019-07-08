@@ -4,6 +4,21 @@ function Exchange(api){
 	this.name='bittrex';
 	this.api=api;
 }
+Exchange.prototype.symbol_list=function(callback){
+	this.request('/v3/markets/summaries','GET','',function(error,data){
+		if(error){
+			callback(error,data);
+			return;
+		}
+		var d=[];
+		for(var i in data){
+			d.push({symbol:data[i].symbol
+					,price:data[i].low
+					,change:data[i].percentChange});
+		}
+		callback(false,d);
+	});
+}
 Exchange.prototype.summary=function(symbol,callback){
 	this.request('/v3/markets/'+symbol+'/summary','GET','',callback);
 }

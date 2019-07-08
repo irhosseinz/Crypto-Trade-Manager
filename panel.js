@@ -196,6 +196,30 @@ Panel.prototype.open_panel=function(page,data){
 				self.res.end('false');
 			})
 			break;
+		case 'symbols':
+			self.res.type('json');
+			var e=this.req.query.e;
+			var input=this.req.query.term;
+			if(!(e in global.exchanges) || !input){
+				self.res.end('[]');
+				return;
+			}
+			input=input.toLowerCase();
+			global.exchanges[e].symbol_list(function(error,data){
+				if(error){
+					self.res.end('[]');
+					return;
+				}
+				var o=[];
+				for(var i in data){
+					if(data[i].symbol.toLowerCase().indexOf(input)<0){
+						continue;
+					}
+					o.push({label:data[i].symbol,price:data[i].price});
+				}
+				self.res.end(JSON.stringify(o));
+			});
+			break;
 		default:
 			self.res.render('index',pData);
 			break;

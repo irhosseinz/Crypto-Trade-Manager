@@ -35,7 +35,7 @@ function dl(id){
 		{{#list}}
 		<tr id="item{{_id}}">
 			<th scope="row">{{_id}}</th>
-			<td>{{name}}</td>
+			<td>{{name}} ({{market}})</td>
 			<td>{{active}}</td>
 			<td><button class="btn btn-sm btn-danger" onclick="dl({{_id}})">DELETE</button></td>
 		</tr>

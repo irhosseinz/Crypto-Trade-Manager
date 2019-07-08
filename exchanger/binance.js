@@ -4,6 +4,21 @@ function Exchange(api){
 	this.name='binance';
 	this.api=api;
 }
+Exchange.prototype.symbol_list=function(callback){
+	this.request('/api/v1/ticker/24hr','GET','',function(error,data){
+		if(error){
+			callback(error,data);
+			return;
+		}
+		var d=[];
+		for(var i in data){
+			d.push({symbol:data[i].symbol
+					,price:data[i].lastPrice
+					,change:data[i].priceChangePercent});
+		}
+		callback(false,d);
+	});
+}
 Exchange.prototype.get_trades=function(symbol,callback){
 	this.request('/api/v1/trades?symbol=symbol','GET','',callback);
 }

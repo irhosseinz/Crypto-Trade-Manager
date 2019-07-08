@@ -1,6 +1,6 @@
 var Tracker=function(exchanger,pair,callback){
 	var e=require('./exchanger/'+exchanger+'.js');
-	this.exchanger=new e();
+	this.exchanger=exchanger;
 	this.pair=this.exchanger.symbol(pair);
 	this.pair_name=pair;
 	

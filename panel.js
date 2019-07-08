@@ -197,7 +197,7 @@ Panel.prototype.open_panel=function(page,data){
 			})
 			break;
 		default:
-			this.res.sendFile(path.join(__dirname + '/html/index.html'));
+			self.res.render('index',pData);
 			break;
 	}
 }

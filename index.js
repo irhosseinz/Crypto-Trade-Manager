@@ -60,7 +60,15 @@ app.get('/img/:file', function(req, res) {
 	res.sendFile(path.join(__dirname + '/html/img/'+req.params.file));
 });
 app.get('/', function(req, res) {
-	res.sendFile(path.join(__dirname + '/html/index.html'));
+	var p=new panel(req,res);
+	try{
+		var cookie=(req.cookies?req.cookies.login:null);
+		p.authorize(cookie);
+		p.open_panel('');
+	}catch(e){
+		p.error(500,e);
+		console.log(e);
+	}
 });
 app.get('/:page.html', function(req, res) {
 	var p=new panel(req,res);

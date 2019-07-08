@@ -17,7 +17,7 @@ Tracker.prototype.start=function(){
 				console.log('error on order book0:'+error);
 				return;
 			}
-			console.log(data);
+//			console.log(data);
 			self.check_tracks(data);
 		});
 	},global.config.cycle_second*1000);
@@ -44,9 +44,13 @@ Tracker.prototype.check_tracks=function(data){
 			continue;
 		}
 		for(var j in this.tracks){
-			var t=this.tracks[j].track[0];
+			var t=this.tracks[j][0];
 			if((this.lastPrice<t.price && t.price<price) || (price<t.price && t.price<this.lastPrice)){
-				this.tracks[j].track.shift();
+				console.log('position reached:'+JSON.stringify(t));
+				this.tracks[j].shift();
+				if(this.tracks[j].length==0){
+					delete this.tracks[j];
+				}
 				this.callback(j,t.pos_id);
 			}
 		}

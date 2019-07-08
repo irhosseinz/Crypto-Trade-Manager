@@ -119,7 +119,6 @@ Panel.prototype.open_panel=function(page,data){
 					}else{
 						self.res.render('panel',pData);
 					}
-					console.log(global.manager);
 					global.manager.add_tracker(d.market,d.pair,id,d.track,0);
 				});
 				return;

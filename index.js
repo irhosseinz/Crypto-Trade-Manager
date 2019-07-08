@@ -16,7 +16,6 @@ global.cache.start();
 
 var m=require('./tracker_manager.js');
 global.manager = new m();
-					console.log(global.manager);
 global.tools = require('./tools.js');
 
 //process.on('SIGINT', function() {
@@ -79,7 +78,7 @@ app.post('/:page.html', function(req, res) {
 	var cookie=(req.cookies?req.cookies.login:null);
 	p.authorize(cookie);
 	try{
-		console.log(req.body);
+//		console.log(req.body);
 		p.open_panel(req.params.page,req.body);
 	}catch(e){
 		p.error(500,e);

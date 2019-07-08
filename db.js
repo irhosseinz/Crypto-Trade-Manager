@@ -20,6 +20,7 @@ function DB(){
 			+", data text null"
 			+", active integer default 1"
 			+")");
+		db.run("CREATE INDEX IF NOT EXISTS apis_user ON apis(user)");
 		db.run("CREATE TABLE IF NOT EXISTS tracks ("
 			+"_id integer primary key autoincrement"
 			+", user integer not null"
@@ -31,15 +32,9 @@ function DB(){
 			+", track text not null"
 			+", action text not null"
 			+", status integer default 0"
-			+")");
-		db.run("CREATE TABLE IF NOT EXISTS apis ("
-			+"_id integer primary key autoincrement"
-			+", user integer not null"
-			+", name text not null"
-			+", date integer not null"
-			+", data text null"
 			+", active integer default 1"
 			+")");
+		db.run("CREATE INDEX IF NOT EXISTS tracks_user ON tracks(user,active)");
 		db.run("CREATE TABLE IF NOT EXISTS trades ("
 			+"_id integer primary key autoincrement"
 			+", user integer not null"
@@ -105,8 +100,9 @@ DB.prototype.deleteApi=function(id,user){
 DB.prototype.deleteTrack=function(id,user){
 	this.db.run("DELETE from tracks WHERE _id=? and user=?",[id,user]);
 };
-DB.prototype.setTrackStatus=function(id,status){
-	this.db.run("UPDATE tracks SET status=? WHERE _id=?",[status,id]);
+DB.prototype.setTrackStatus=function(id,status,finish){
+	var active=(finish?0:1);
+	this.db.run("UPDATE tracks SET status=?,active=? WHERE _id=?",[status,active,id]);
 };
 DB.prototype.getUser=function(username,callback){
 	this.db.all("SELECT * FROM users where username=?",[username],function(error,rows){
@@ -119,7 +115,7 @@ DB.prototype.getUser=function(username,callback){
 	});
 };
 DB.prototype.getTrack=function(id,callback){
-	this.db.all("SELECT tracks.*,apis.data as api_data,apis.active as api_active FROM tracks where _id=? INNER JOIN apis ON tracks.api=apis._id",[id],function(error,rows){
+	this.db.all("SELECT tracks.*,apis.data as api_data,apis.active as api_active FROM tracks INNER JOIN apis ON tracks.api=apis._id where tracks._id=?",[id],function(error,rows){
 		if(error){
 			callback(error);
 //			console.log("DBgetOrders-E:"+error);
@@ -154,7 +150,24 @@ DB.prototype.getApis=function(user,callback){
 	});
 };
 DB.prototype.getTracks=function(user,callback){
-	this.db.all("SELECT * FROM tracks where user=?",[user],function(error,rows){
+	this.db.all("SELECT * FROM tracks where user=? and active=1",[user],function(error,rows){
+		if(error){
+			callback(error);
+//			console.log("DBgetOrders-E:"+error);
+			return;
+		}
+		for(var i in rows){
+			try{
+				rows[i].track=JSON.parse(rows[i].track);
+			}catch(e){
+				rows[i].track=[];
+			}
+		}
+		callback(false,rows);
+	});
+};
+DB.prototype.getAllTracks=function(callback){
+	this.db.all("SELECT * FROM tracks where active=1",function(error,rows){
 		if(error){
 			callback(error);
 //			console.log("DBgetOrders-E:"+error);
@@ -171,7 +184,7 @@ DB.prototype.getTracks=function(user,callback){
 	});
 };
 DB.prototype.getOrders=function(user,callback){
-	this.db.all("SELECT * FROM trades WHERE user=? order by date desc",function(error,rows){
+	this.db.all("SELECT * FROM trades WHERE user=? order by date desc",[user],function(error,rows){
 		if(error){
 			callback(error);
 //			console.log("DBgetOrders-E:"+error);

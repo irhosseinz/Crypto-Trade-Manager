@@ -1,0 +1,25 @@
+<h1>Your Trades</h1>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Date</th>
+      <th scope="col">Exchanger</th>
+      <th scope="col">Symbol</th>
+      <th scope="col">Type</th>
+      <th scope="col">Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+		{{#list}}
+		<tr class="table-{{#ifEqual type 'BUY'}}success{{else}}danger{{/ifEqual}}">
+			<th scope="row">{{_id}}</th>
+			<td>{{date date}}</td>
+			<td>{{market}}</td>
+			<td>{{symbol}}</td>
+			<td>{{type}}</td>
+			<td>{{amount}}</td>
+		</tr>
+		{{/list}}
+  </tbody>
+</table>

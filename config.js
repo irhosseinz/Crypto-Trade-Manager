@@ -3,6 +3,10 @@ module.exports.APIS={
 		name:'Bittrex'
 		,keys:['key','secret']
 	}
+	,binance:{
+		name:'Binance'
+		,keys:['key','secret']
+	}
 };
 
 module.exports.title='Trade Tracker';

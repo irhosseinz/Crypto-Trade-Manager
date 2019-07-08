@@ -1,31 +1,16 @@
 var CryptoJS = require("crypto-js");
 function Exchange(api){
-	this.domain='api.bittrex.com';
-	this.name='bittrex';
+	this.domain='api.binance.com';
+	this.name='binance';
 	this.api=api;
 }
-Exchange.prototype.summary=function(symbol,callback){
-	this.request('/v3/markets/'+symbol+'/summary','GET','',callback);
-}
-Exchange.prototype.order_book=function(symbol,callback){
-	this.request('/v3/markets/'+symbol+'/orderbook','GET','',callback);
-}
 Exchange.prototype.get_trades=function(symbol,callback){
-	this.request('/v3/markets/'+symbol+'/trades','GET','',callback);
-}
-Exchange.prototype.open_orders=function(callback){
-	this.request('/v3/orders/open','GET','',callback);
-}
-Exchange.prototype.delete_order=function(id,callback){
-	this.request('/v3/orders/'+id,'DELETE','',callback);
-}
-Exchange.prototype.get_order=function(id,callback){
-	this.request('/v3/orders/'+id,'GET','',callback);
+	this.request('/api/v1/trades?symbol=symbol','GET','',callback);
 }
 Exchange.prototype.symbol=function(pair){
 	if(typeof pair == 'string')
 		return pair;
-	return pair.join('-');
+	return pair.join('');
 }
 Exchange.prototype.round=function(num,up){
 	if(up)
@@ -35,17 +20,18 @@ Exchange.prototype.round=function(num,up){
 }
 Exchange.prototype.order_market=function(data,callback){
 	var d={
-		"marketSymbol": data.pair,
-		"direction": (data.buy?'BUY':'SELL'),
-		"type": "LIMIT",
+		"symbol": data.pair,
+		"side": (data.buy?'BUY':'SELL'),
+		"type": "MARKET",
 		"quantity": parseFloat(data.amount),
-		"limit": this.round(parseFloat(data.price)*(data.buy?2:0.5)),
-		"timeInForce": "GOOD_TIL_CANCELLED"
+//		"price": this.round(parseFloat(data.price)*(data.buy?2:0.5)),
+		"timestamp": new Date().getTime()
 		};
+	const tf = require('object-to-formdata');
 //   if(data.id){
 //   	d.clientOrderId=""+data.id;
 //   }
-	this.request('/v3/orders','POST',JSON.stringify(d),callback);
+	this.request('/api/v3/order','POST',tf(d),callback);
 }
 
 
@@ -56,16 +42,13 @@ Exchange.prototype.request=function(uri,method,content,callback){
 	var headers={};
 	if(this.api){
 		headers=headers={
-			'Api-Timestamp':timestamp
-			,'Api-Content-Hash':CryptoJS.SHA512(content).toString(CryptoJS.enc.Hex)
-			,'Api-Key':this.api.key
+			'X-MBX-APIKEY':this.api.key
 		};
-		var preSign = [timestamp, 'https://'+this.domain+uri, method, headers['Api-Content-Hash'], ''].join('');
-		headers['Api-Signature']=CryptoJS.HmacSHA512(preSign
+		headers['Api-Signature']=CryptoJS.HmacSHA512(content
 				, this.api.secret).toString(CryptoJS.enc.Hex);
 	}
 	if(content)
-		headers['Content-Type']='application/json';
+		headers['Content-Type']='application/x-www-form-urlencoded';
 	var options = {
 		host: this.domain,
 		port: 443,

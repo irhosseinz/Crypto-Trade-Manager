@@ -16,11 +16,11 @@ These exchanges are supported:
 To use this app you need a system with [Node-JS](https://nodejs.org/en/download/) installed
 * in app folder run this command: `npm install`
 * start app with `node index.js` (you can use `pm2` for standard usage)
-* open your browser and open this url: `https://localhost:1040` (if you are running the app on a server replace `localhost` with your server IP, and open port 1040)
+* open your browser and open this url: `https://localhost:1040` (if you are running the app on a server replace `localhost` with your server IP, and open port 1040 on your firewall)
 * Register for a account and login
-* to add a new tracker you need a symbol to be added. for bittrex it's like `LTC-BTC` and for binance it's like `LTCBTC`
 
 ## Coming Features
+If you had any opinions to make this project better, please let me know!
 > APP IS STILL IN __BETA__ RELEASE, _use it catefully_
 
 ## Show your support

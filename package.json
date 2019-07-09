@@ -1,7 +1,7 @@
 {
-  "name": "autotrader",
+  "name": "trademanager",
   "version": "1.0.0",
-  "description": "AutoTrader",
+  "description": "CryptoTradeManager",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

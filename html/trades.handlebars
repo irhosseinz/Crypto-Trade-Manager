@@ -19,8 +19,8 @@
 			<td>{{market}}</td>
 			<td>{{symbol}}</td>
 			<td>{{type}} ({{direction}})</td>
-			<td>{{amount}}</td>
-			<td>{{#ifEqual type 'LIMIT'}}{{price}}{{/ifEqual}}</td>
+			<td>{{formatPrice amount}}</td>
+			<td>{{#ifEqual type 'LIMIT'}}{{formatPrice price}}{{/ifEqual}}</td>
 		</tr>
 		{{/list}}
   </tbody>

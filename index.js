@@ -37,7 +37,7 @@ var hbs = exphbs.create({
 						return options.inverse(this);
 					}
 		,formatPrice: function(v) {
-						return parseFloat(v).toFixed(12)
+						return parseFloat(v).toFixed(12).replace(/\.?0+$/,'');
 					}
 		,date: function(t) {
 						var d=new Date(parseInt(t));

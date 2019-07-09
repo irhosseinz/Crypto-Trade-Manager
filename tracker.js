@@ -45,7 +45,7 @@ Tracker.prototype.check_tracks=function(data){
 		}
 		for(var j in this.tracks){
 			var t=this.tracks[j][0];
-			if((this.lastPrice<t.price && t.price<price) || (price<t.price && t.price<this.lastPrice)){
+			if((this.lastPrice<t.price && t.price<=price) || (price<=t.price && t.price<this.lastPrice)){
 				console.log('position reached:'+JSON.stringify(t));
 				this.tracks[j].shift();
 				if(this.tracks[j].length==0){

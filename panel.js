@@ -109,7 +109,8 @@ Panel.prototype.open_panel=function(page,data){
 					,pair:data.pair
 					,amount:data.amount
 					,track:[parseFloat(data.price)]
-					,action:(data.buy?'BUY':'SELL')
+					,action:data.action
+					,action_price:data.trade_price
 				};
 				this.user.add_tracker(d,function(error,id){
 					pData.list=self.user.tracks;
@@ -181,6 +182,11 @@ Panel.prototype.open_panel=function(page,data){
 					pData.error=err;
 					self.res.render('trades',pData);
 					return;
+				}
+				for(var i in data){
+					var a=data[i].type.split('_');
+					data[i].direction=a[1].toUpperCase();
+					data[i].type=a[0].toUpperCase();
 				}
 				pData.list=data;
 				self.res.render('trades',pData);

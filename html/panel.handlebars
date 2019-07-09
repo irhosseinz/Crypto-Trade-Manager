@@ -25,6 +25,7 @@ $( document ).ready(function(){
 		select: function( event, ui ) {
 			$('#pair_input').val(ui.item.label);
 			$('#price').val(ui.item.price);
+			$('#trade_price').val(ui.item.price);
 			$('#pair_name').html(ui.item.label);
 		}
 	});
@@ -80,13 +81,26 @@ function dl(market,pair,id){
 		<input type="hidden" class="form-control" id="pair_input" name="pair"/>
 	</div>
 	<div class="form-group">
-		<label for="price">Price</label>
+		<label for="price">Target Price</label> <a tabindex="-2" class="badge badge-info" role="button" data-toggle="popover" data-trigger="focus" title="Hint" data-content="When price reaches this value, following action will be executed">?</a>
 		<input type="number" class="form-control" id="price" name="price" step="any" required/>
 	</div>
 	<div class="form-group">
-		<label for="amount">Amount</label>
+		<label for="amount">Amount to Trade</label> <a tabindex="-2" class="badge badge-info" role="button" data-toggle="popover" data-trigger="focus" title="Hint" data-content="How much of this coin do you want to be traded?">?</a>
 		<input type="number" class="form-control" id="amount" name="amount" required/>
 	</div>
-	<input type="submit" class="btn btn-success" name="buy" value="BUY"/>
-	<input type="submit" class="btn btn-danger" name="sell" value="SELL"/>
+	<div class="form-group">
+		<label for="amount">What to do?</label><a tabindex="-2" class="badge badge-info" role="button" data-toggle="popover" data-trigger="focus" title="Hint" data-content="Market Buy and Sell performs an immediate trade with any available price, and Limit buy and Sell create a trade at a specific price">?</a>
+		<select class="form-control" name="action" required onchange="if(this.value.split('_')[0]=='limit')$('#trade_price0').show();else $('#trade_price0').hide();">
+			<option></option>
+			<option value="market_buy">Market Buy</option>
+			<option value="market_sell">Market Sell</option>
+			<option value="limit_buy">Limit Buy</option>
+			<option value="limit_sell">Limit Sell</option>
+		</select>
+	</div>
+	<div class="form-group" id="trade_price0" style="display:none">
+		<label for="price">Price to Trade</label>
+		<input type="number" class="form-control" id="trade_price" name="trade_price" step="any" required/>
+	</div>
+	<input type="submit" class="btn btn-primary" value="SEND"/>
 </form>

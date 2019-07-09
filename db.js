@@ -31,6 +31,7 @@ function DB(){
 			+", amount real not null"
 			+", track text not null"
 			+", action text not null"
+			+", action_price text null"
 			+", status integer default 0"
 			+", active integer default 1"
 			+")");
@@ -43,6 +44,7 @@ function DB(){
 			+", market_id text null"
 			+", type text not null"
 			+", amount real not null"
+			+", price real null"
 			+", date integer not null"
 			+")");
 	});
@@ -70,8 +72,8 @@ DB.prototype.saveApi=function(user,market,name,data,callback){
 	stmt.finalize();
 };
 DB.prototype.saveTrack=function(data,callback){
-	var stmt=this.db.prepare("INSERT INTO tracks(user,api,market,pair,date,amount,track,action) VALUES (?,?,?,?,?,?,?,?)");
-	stmt.run(data.user,data.api,data.market,data.pair,new Date().getTime(),data.amount,JSON.stringify(data.track),data.action,function(err){
+	var stmt=this.db.prepare("INSERT INTO tracks(user,api,market,pair,date,amount,track,action,action_price) VALUES (?,?,?,?,?,?,?,?,?)");
+	stmt.run(data.user,data.api,data.market,data.pair,new Date().getTime(),data.amount,JSON.stringify(data.track),data.action,data.action_price,function(err){
 				if(err){
 					callback(err);
 				}else
@@ -80,9 +82,9 @@ DB.prototype.saveTrack=function(data,callback){
 	stmt.finalize();
 };
 DB.prototype.saveTrade=function(data,callback){
-	var stmt=this.db.prepare("INSERT INTO trades(user,symbol,market,market_id,type,amount,date) VALUES (?,?,?,?,?,?,?)");
+	var stmt=this.db.prepare("INSERT INTO trades(user,symbol,market,market_id,type,amount,price,date) VALUES (?,?,?,?,?,?,?,?)");
 	stmt.run(data.user,data.symbol,data.market,data.market_id
-			,data.type,data.amount
+			,data.type,data.amount,data.price
 			,data.date,function(err){
 				if(err && callback){
 					callback(err);

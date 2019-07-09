@@ -48,15 +48,18 @@ Exchange.prototype.round=function(num,up){
 	else
 		return Math.floor(num*1e8)/1e8;
 }
-Exchange.prototype.order_market=function(data,callback){
+Exchange.prototype.order=function(data,callback){
 	var d={
 		"marketSymbol": data.pair,
 		"direction": (data.buy?'BUY':'SELL'),
 		"type": "LIMIT",
 		"quantity": parseFloat(data.amount),
-		"limit": this.round(parseFloat(data.price)*(data.buy?2:0.5)),
+		"limit": parseFloat(data.price),
 		"timeInForce": "GOOD_TIL_CANCELLED"
 		};
+	if(data.market){
+		d.limit=this.round(d.limit*(data.buy?2:0.5));
+	}
 //   if(data.id){
 //   	d.clientOrderId=""+data.id;
 //   }

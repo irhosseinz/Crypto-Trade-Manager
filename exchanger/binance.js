@@ -33,15 +33,19 @@ Exchange.prototype.round=function(num,up){
 	else
 		return Math.floor(num*1e8)/1e8;
 }
-Exchange.prototype.order_market=function(data,callback){
+Exchange.prototype.order=function(data,callback){
 	var d={
 		"symbol": data.pair,
 		"side": (data.buy?'BUY':'SELL'),
-		"type": "MARKET",
+		"type": "LIMIT",
 		"quantity": parseFloat(data.amount),
-//		"price": this.round(parseFloat(data.price)*(data.buy?2:0.5)),
+		"price": parseFloat(data.price),
 		"timestamp": new Date().getTime()
 		};
+	if(data.market){
+		d.type='MARKET';
+		delete d.price;
+	}
 	const tf = require('object-to-formdata');
 //   if(data.id){
 //   	d.clientOrderId=""+data.id;

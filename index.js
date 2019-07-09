@@ -1,4 +1,5 @@
 var https = require('https'),
+	http = require('http'),
 	express = require('express'),
 	cookieParser = require('cookie-parser'),
 	exphbs = require('express-handlebars'),
@@ -94,11 +95,15 @@ app.post('/:page.html', function(req, res) {
 	}
 });
 
-const fs = require('fs');
-const ssl = {
-  key: fs.readFileSync(__dirname+'/ssl/ssl.key'),
-  cert: fs.readFileSync(__dirname+'/ssl/ssl.crt')
-};
-https.createServer(ssl,app).listen(global.config.port);
+if(global.config.https){
+	const fs = require('fs');
+	const ssl = {
+	  key: fs.readFileSync(__dirname+'/ssl/ssl.key'),
+	  cert: fs.readFileSync(__dirname+'/ssl/ssl.crt')
+	};
+	https.createServer(ssl,app).listen(global.config.port);
+}else{
+	http.createServer(app).listen(global.config.port);
+}
 
 console.log('SERVER IS RUNNING ON '+global.config.port);

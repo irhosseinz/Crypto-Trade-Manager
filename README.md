@@ -1,4 +1,4 @@
-## Trade Tracker
+## Trade Manager
 This app helps you set some watchers on crypto market, in a way that if a coin reachs a price it will be traded automaticly
 
 ## Main features

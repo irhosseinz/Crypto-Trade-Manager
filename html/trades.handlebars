@@ -8,17 +8,19 @@
       <th scope="col">Symbol</th>
       <th scope="col">Type</th>
       <th scope="col">Amount</th>
+      <th scope="col">Price</th>
     </tr>
   </thead>
   <tbody>
 		{{#list}}
-		<tr class="table-{{#ifEqual type 'BUY'}}success{{else}}danger{{/ifEqual}}">
+		<tr class="table-{{#ifEqual direction 'BUY'}}success{{else}}danger{{/ifEqual}}">
 			<th scope="row">{{_id}}</th>
 			<td>{{date date}}</td>
 			<td>{{market}}</td>
 			<td>{{symbol}}</td>
-			<td>{{type}}</td>
+			<td>{{type}} ({{direction}})</td>
 			<td>{{amount}}</td>
+			<td>{{#ifEqual type 'LIMIT'}}{{price}}{{/ifEqual}}</td>
 		</tr>
 		{{/list}}
   </tbody>

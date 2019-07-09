@@ -29,7 +29,17 @@ Tracker.prototype.callback=function(track_id,pos_id){
 		}
 		var ex=require('./exchanger/'+data.market+'.js');
 		var e=new ex(data.api_data);
-		e.order_market({amount:data.amount,pair:data.pair,buy:(data.action=='BUY'),price:data.track[data.track.length-1]},function(error,d){
+		var action=data.action.split('_');
+		var order={
+			amount:data.amount
+			,market:(action[0]=='market')
+			,pair:data.pair
+			,buy:(action[1]=='buy')
+			,price:data.track[data.track.length-1]
+			};
+		if(action[0]=='limit')
+			order.price=parseFloat(data.action_price);
+		e.order(order,function(error,d){
 			console.log(d);
 			global.db.saveTrade({
 				user:data.user
@@ -38,6 +48,7 @@ Tracker.prototype.callback=function(track_id,pos_id){
 				,market_id:d.id
 				,type:data.action
 				,amount:data.amount
+				,price:order.price
 				,date:new Date().getTime()
 			});
 		});

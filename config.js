@@ -9,6 +9,9 @@ module.exports.APIS={
 	}
 };
 
+module.exports.https=false;
+
+
 module.exports.title='Trade Tracker';
 
 

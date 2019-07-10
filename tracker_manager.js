@@ -70,6 +70,7 @@ Tracker.prototype.remove_tracker=function(market,pair,id){
 		return true;
 	}
 	if(this.trackers[key].remove_tracker(id)){
+		this.trackers[key].stop();
 		delete this.trackers[key];
 	}
 }

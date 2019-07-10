@@ -12,7 +12,7 @@ module.exports.APIS={
 module.exports.https=false;
 
 
-module.exports.title='Trade Tracker';
+module.exports.title='Trade Manager';
 
 
 module.exports.cookie_life=900000;

@@ -8,7 +8,7 @@
 </script>
 # Crypto Trade Manager
 This app helps you set some watchers on crypto market, in a way that if a coin reachs a price it will be traded automaticly.
-[![youtube](https://raw.githubusercontent.com/irhosseinz/Crypto-Trade-Manager/master/html/img/youtube.jpg)](https://www.youtube.com/watch?v=1THmL1ILI4Q)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/1THmL1ILI4Q" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Usage
 * __Stop Loss__: trade based on your stop-loss strategy 

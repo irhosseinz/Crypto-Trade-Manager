@@ -10,7 +10,7 @@ function DB(){
 		console.log('DB CONNECTED');
 //		db.run("DELETE FROM trades");
 		
-		db.run("CREATE TABLE IF NOT EXISTS `users` ("
+		db.query("CREATE TABLE IF NOT EXISTS `users` ("
 			  +"`_id` int(11) NOT NULL AUTO_INCREMENT,"
 			  +"`username` varchar(50) DEFAULT NULL,"
 			  +"`password` varchar(255) NOT NULL,"
@@ -18,7 +18,7 @@ function DB(){
 			  +"PRIMARY KEY (`_id`),"
 			  +"UNIQUE KEY `username` (`username`)"
 			+") ENGINE=InnoDB DEFAULT CHARSET=utf8");
-		db.run("CREATE TABLE IF NOT EXISTS apis ("
+		db.query("CREATE TABLE IF NOT EXISTS apis ("
 				+"`_id` int(11) NOT NULL AUTO_INCREMENT,"
 				+", user int(11) not null"
 				+", name varchar(20) not null"
@@ -29,7 +29,7 @@ function DB(){
 				+"PRIMARY KEY (`_id`),"
 			  +"INDEX KEY `user` (`user`)"
 			+") ENGINE=InnoDB DEFAULT CHARSET=utf8");
-		db.run("CREATE TABLE IF NOT EXISTS tracks ("
+		db.query("CREATE TABLE IF NOT EXISTS tracks ("
 			  +"`_id` int(11) NOT NULL AUTO_INCREMENT,"
 			+", user int(11) not null"
 			+", api int(11) not null"
@@ -45,7 +45,7 @@ function DB(){
 			  +"PRIMARY KEY (`_id`),"
 			  +"INDEX KEY `user` (`user`,`active`)"
 			+") ENGINE=InnoDB DEFAULT CHARSET=utf8");
-		db.run("CREATE TABLE IF NOT EXISTS trades ("
+		db.query("CREATE TABLE IF NOT EXISTS trades ("
 			  +"`_id` int(11) NOT NULL AUTO_INCREMENT,"
 			+", user int(11) not null"
 			+", symbol varchar(20) not null"

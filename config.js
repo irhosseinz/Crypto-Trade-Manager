@@ -9,6 +9,21 @@ module.exports.APIS={
 	}
 };
 
+//module.exports.db={
+//	type:'mysql'
+//	,data:{
+//		host     : 'localhost',
+//		user     : 'me',
+//		password : 'secret',
+//		database : 'my_db'
+//		}
+//};
+module.exports.db={
+	type:'sqlite'
+	,data:{
+		database : 'DB'
+		}
+};
 module.exports.https=false;
 
 

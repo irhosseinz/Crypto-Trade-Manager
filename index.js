@@ -9,7 +9,7 @@ var https = require('https'),
 
 global.logger=require('./logger.js');
 global.config=require('./config.js');
-var db=require('./db.js');
+var db=require('./db_'+global.config.db.type+'.js');
 global.db=new db();
 
 global.cache = require('./cache.js');

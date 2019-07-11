@@ -1,6 +1,6 @@
 function DB(){
 	var sq=require('sqlite3').verbose();
-	var db=new sq.Database('./DB.sqlite3');
+	var db=new sq.Database('./'+global.config.db.data.database+'.sqlite3');
 	db.serialize(function(){
 		console.log('DB CONNECTED');
 //		db.run("DELETE FROM trades");

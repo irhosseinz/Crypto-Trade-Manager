@@ -17,7 +17,7 @@ function DB(){
 			  +"`date` bigint(15),"
 			  +"PRIMARY KEY (`_id`),"
 			  +"UNIQUE KEY `username` (`username`)"
-			"+) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+			+") ENGINE=InnoDB DEFAULT CHARSET=utf8");
 		db.run("CREATE TABLE IF NOT EXISTS apis ("
 				+"`_id` int(11) NOT NULL AUTO_INCREMENT,"
 				+", user int(11) not null"
@@ -28,7 +28,7 @@ function DB(){
 				+", active int(1) default 1"
 				+"PRIMARY KEY (`_id`),"
 			  +"INDEX KEY `user` (`user`)"
-			"+) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+			+") ENGINE=InnoDB DEFAULT CHARSET=utf8");
 		db.run("CREATE TABLE IF NOT EXISTS tracks ("
 			  +"`_id` int(11) NOT NULL AUTO_INCREMENT,"
 			+", user int(11) not null"
@@ -44,7 +44,7 @@ function DB(){
 			+", active int(2) default 1"
 			  +"PRIMARY KEY (`_id`),"
 			  +"INDEX KEY `user` (`user`,`active`)"
-			"+) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+			+") ENGINE=InnoDB DEFAULT CHARSET=utf8");
 		db.run("CREATE TABLE IF NOT EXISTS trades ("
 			  +"`_id` int(11) NOT NULL AUTO_INCREMENT,"
 			+", user int(11) not null"
@@ -56,7 +56,7 @@ function DB(){
 			+", price varchar(50) null"
 			+", date bigint(15)"
 			  +",PRIMARY KEY (`_id`)"
-			"+) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+			+") ENGINE=InnoDB DEFAULT CHARSET=utf8");
 	});
 	this.db=db;
 };

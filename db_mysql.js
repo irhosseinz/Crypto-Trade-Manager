@@ -19,18 +19,18 @@ function DB(){
 			  +"UNIQUE KEY `username` (`username`)"
 			+") ENGINE=InnoDB DEFAULT CHARSET=utf8");
 		db.query("CREATE TABLE IF NOT EXISTS apis ("
-				+"`_id` int(11) NOT NULL AUTO_INCREMENT,"
+				+"`_id` int(11) NOT NULL AUTO_INCREMENT"
 				+", user int(11) not null"
 				+", name varchar(20) not null"
 				+", market varchar(20) not null"
 				+", date bigint(15)"
 				+", data varchar(255) null"
 				+", active int(1) default 1"
-				+"PRIMARY KEY (`_id`),"
-			  +"INDEX KEY `user` (`user`)"
+				+",PRIMARY KEY (`_id`)"
+			  +", KEY `user` (`user`)"
 			+") ENGINE=InnoDB DEFAULT CHARSET=utf8");
 		db.query("CREATE TABLE IF NOT EXISTS tracks ("
-			  +"`_id` int(11) NOT NULL AUTO_INCREMENT,"
+			  +"`_id` int(11) NOT NULL AUTO_INCREMENT"
 			+", user int(11) not null"
 			+", api int(11) not null"
 			+", market varchar(20) not null"
@@ -42,11 +42,11 @@ function DB(){
 			+", action_price varchar(50) null"
 			+", status int(2) default 0"
 			+", active int(2) default 1"
-			  +"PRIMARY KEY (`_id`),"
-			  +"INDEX KEY `user` (`user`,`active`)"
+			  +",PRIMARY KEY (`_id`)"
+			  +", KEY `user` (`user`,`active`)"
 			+") ENGINE=InnoDB DEFAULT CHARSET=utf8");
 		db.query("CREATE TABLE IF NOT EXISTS trades ("
-			  +"`_id` int(11) NOT NULL AUTO_INCREMENT,"
+			  +"`_id` int(11) NOT NULL AUTO_INCREMENT"
 			+", user int(11) not null"
 			+", symbol varchar(20) not null"
 			+", market varchar(20) not null"
@@ -65,9 +65,12 @@ DB.prototype.newUser=function(username,password,callback){
 		,[username.toLowerCase(),new Date().getTime(),password]
 		,function(err,result){
 				if(err){
-					callback(err);
+					if(err.errno==1062){
+						callback('Username already registered');
+					}else if(callback)
+						callback(err);
 					console.log(err);
-				}else
+				}else if(callback)
 					callback(false,result.insertId);
 			});
 };
@@ -76,9 +79,10 @@ DB.prototype.saveApi=function(user,market,name,data,callback){
 		,[user,name,market,new Date().getTime(),JSON.stringify(data)]
 		,function(err,result){
 				if(err){
-					callback(err);
+					if(callback)
+						callback(err);
 					console.log(err);
-				}else
+				}else if(callback)
 					callback(false,result.insertId);
 			});
 };
@@ -87,9 +91,10 @@ DB.prototype.saveTrack=function(data,callback){
 		,[data.user,data.api,data.market,data.pair,new Date().getTime(),data.amount,JSON.stringify(data.track),data.action,data.action_price]
 		,function(err,result){
 				if(err){
-					callback(err);
+					if(callback)
+						callback(err);
 					console.log(err);
-				}else
+				}else if(callback)
 					callback(false,result.insertId);
 			});
 };
@@ -100,9 +105,10 @@ DB.prototype.saveTrade=function(data,callback){
 			,data.date]
 		,function(err,result){
 				if(err){
-					callback(err);
+					if(callback)
+						callback(err);
 					console.log(err);
-				}else
+				}else if(callback)
 					callback(false,result.insertId);
 			});
 };
@@ -120,7 +126,7 @@ DB.prototype.setTrackStatus=function(id,status,finish){
 	this.db.query("UPDATE tracks SET status=?,active=? WHERE _id=?",[status,active,id]);
 };
 DB.prototype.getUser=function(username,callback){
-	this.db.query("SELECT * FROM users where username=?",[username],function(error,result,rows){
+	this.db.query("SELECT * FROM users where username=?",[username],function(error,rows){
 		if(error){
 			callback(error);
 //			console.log("DBgetOrders-E:"+error);
@@ -130,7 +136,7 @@ DB.prototype.getUser=function(username,callback){
 	});
 };
 DB.prototype.getTrack=function(id,callback){
-	this.db.query("SELECT tracks.*,apis.data as api_data,apis.active as api_active FROM tracks INNER JOIN apis ON tracks.api=apis._id where tracks._id=?",[id],function(error,result,rows){
+	this.db.query("SELECT tracks.*,apis.data as api_data,apis.active as api_active FROM tracks INNER JOIN apis ON tracks.api=apis._id where tracks._id=?",[id],function(error,rows){
 		if(error){
 			callback(error);
 //			console.log("DBgetOrders-E:"+error);
@@ -148,7 +154,7 @@ DB.prototype.getTrack=function(id,callback){
 	});
 };
 DB.prototype.getApis=function(user,callback){
-	this.db.query("SELECT * FROM apis where user=?",[user],function(error,result,rows){
+	this.db.query("SELECT * FROM apis where user=?",[user],function(error,rows){
 		if(error){
 			callback(error);
 //			console.log("DBgetOrders-E:"+error);
@@ -165,7 +171,7 @@ DB.prototype.getApis=function(user,callback){
 	});
 };
 DB.prototype.getTracks=function(user,callback){
-	this.db.all("SELECT * FROM tracks where user=? and active=1",[user],function(error,result,rows){
+	this.db.query("SELECT * FROM tracks where user=? and active=1",[user],function(error,rows){
 		if(error){
 			callback(error);
 //			console.log("DBgetOrders-E:"+error);
@@ -182,7 +188,7 @@ DB.prototype.getTracks=function(user,callback){
 	});
 };
 DB.prototype.getAllTracks=function(callback){
-	this.db.query("SELECT * FROM tracks where active=1",function(error,result,rows){
+	this.db.query("SELECT * FROM tracks where active=1",function(error,rows){
 		if(error){
 			callback(error);
 //			console.log("DBgetOrders-E:"+error);
@@ -199,7 +205,7 @@ DB.prototype.getAllTracks=function(callback){
 	});
 };
 DB.prototype.getOrders=function(user,callback){
-	this.db.query("SELECT * FROM trades WHERE user=? order by date desc",[user],function(error,result,rows){
+	this.db.query("SELECT * FROM trades WHERE user=? order by date desc",[user],function(error,rows){
 		if(error){
 			callback(error);
 //			console.log("DBgetOrders-E:"+error);

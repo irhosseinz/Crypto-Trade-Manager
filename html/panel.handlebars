@@ -66,7 +66,7 @@ function dl(market,pair,id){
 </table>
 <form method="post" action="panel.html" id="form">
 	<div class="form-group">
-		<label for="exchanger">Exchanger Name</label><a href="exchanger.html" class="btn btn-secondary">Add Exchanger</a>
+		<label for="exchanger">Exchanger Name</label><a href="exchanger.html" class="btn btn-outline-success btn-sm">Add</a>
 		<select class="form-control" id="exchanger" name="api" required onchange="$('#e_name').val(this.value.split('_')[1])">
     		<option></option>
 		{{#apis}}

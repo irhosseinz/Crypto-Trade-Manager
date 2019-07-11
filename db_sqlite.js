@@ -54,7 +54,10 @@ DB.prototype.newUser=function(username,password,callback){
 	var stmt=this.db.prepare("INSERT INTO users(username,date,password) VALUES (?,?,?)");
 	stmt.run(username.toLowerCase(),new Date().getTime(),password,function(err){
 				if(err){
-					callback(err);
+					if(err.errno==19){
+						callback('Username already registered');
+					}else
+						callback(err);
 					console.log(err);
 				}else
 					callback(false,this.lastID);

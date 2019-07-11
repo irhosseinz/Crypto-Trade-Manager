@@ -35,14 +35,13 @@ User.prototype.register=function(username,password,callback){
 	global.db.newUser(username,password,function(err,data){
 		if(err){
 			if(callback){
-				if(err.errno==19){
-					callback('Username already registered');
-				}else callback(err);
+				callback(err);
 			}
 			return;
 		}
 		self.set_login({username:username,_id:data});
-		callback(false,data);
+		if(callback)
+			callback(false,data);
 	});
 }
 User.prototype.login=function(username,password,callback){

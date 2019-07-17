@@ -4,8 +4,10 @@ var Tracker=function(){
 	this.load_trackers();
 	
 	global.exchanges={};
+	global.exchanges_class={};
 	for(var i in global.config.APIS){
 		var e=require('./exchanger/'+i+'.js');
+		global.exchanges_class[i]=e;
 		global.exchanges[i]=new e();
 	}
 }

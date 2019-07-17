@@ -28,8 +28,42 @@ Exchange.prototype.order_book=function(symbol,callback){
 Exchange.prototype.get_trades=function(symbol,callback){
 	this.request('/v3/markets/'+symbol+'/trades','GET','',callback);
 }
+Exchange.prototype.balances=function(callback){
+	this.request('/v3/balances','GET','',function(error,data){
+		if(error){
+			callback(error,data);
+			return;
+		}
+		var o=[];
+		for(var i in data){
+			o.push({
+				symbol:data[i].currencySymbol
+				,total:parseFloat(data[i].total)
+				,available:parseFloat(data[i].available)
+			});
+		}
+		callback(false,o);
+	});
+}
 Exchange.prototype.open_orders=function(callback){
-	this.request('/v3/orders/open','GET','',callback);
+	this.request('/v3/orders/open','GET','',function(error,data){
+		if(error){
+			callback(error,data);
+			return;
+		}
+		var o=[];
+		for(var i in data){
+			o.push({
+				id:data[i].id
+				,symbol:data[i].marketSymbol
+				,buy:(data[i].direction=='BUY')
+				,price:parseFloat(data[i].limit)
+				,amount:parseFloat(data[i].quantity)
+				,filled:parseFloat(data[i].fillQuantity)
+			});
+		}
+		callback(false,o);
+	});
 }
 Exchange.prototype.delete_order=function(id,callback){
 	this.request('/v3/orders/'+id,'DELETE','',callback);

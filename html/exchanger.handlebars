@@ -20,6 +20,34 @@ function dl(id){
 		$('#item'+id).hide();
 	});
 }
+function exchange_balance(api){
+	$('#modal_action').attr("disabled", true);
+	$('#modal_title').text('Exchange Balance');
+	$('#modal_body').text('getting data. please wait..');
+	$('#modal').modal();
+	$.post("exchanger.html",'balances='+encodeURIComponent(api),function( data ) {
+		var html='<table class="table table-striped"><thead><tr><th scope="col">Symbol</th><th scope="col">Avaiable</th><th scope="col">Total</th></tr></thead><tbody>';
+		for(var i in data){
+			html+='<tr><th scope="row">'+data[i].symbol+'</th><td>'+data[i].available+'</td><td>'+data[i].total+'</td></tr>';
+		}
+		html+='</tbody></table>';
+		$('#modal_body').html(html);
+	},'json');
+}
+function exchange_orders(api){
+	$('#modal_action').attr("disabled", true);
+	$('#modal_title').text('Exchange Open Trades');
+	$('#modal_body').text('getting data. please wait..');
+	$('#modal').modal();
+	$.post("exchanger.html",'orders='+encodeURIComponent(api),function( data ) {
+		var html='<table class="table table-striped"><thead><tr><th scope="col">Symbol</th><th scope="col">Price</th><th scope="col">Quantity</th></tr></thead><tbody>';
+		for(var i in data){
+			html+='<tr class="table-'+(data[i].buy?'success':'danger')+'"><th scope="row">'+data[i].symbol+'</th><td>'+data[i].price+'</td><td>'+data[i].amount+(data[i].filled?' (-'+data[i].filled+')':'')+'</td></tr>';
+		}
+		html+='</tbody></table>';
+		$('#modal_body').html(html);
+	},'json');
+}
 </script>
 <h1>Your Apis</h1>
 <table class="table table-striped">
@@ -28,6 +56,7 @@ function dl(id){
       <th scope="col">#</th>
       <th scope="col">Name</th>
       <th scope="col">Status</th>
+      <th scope="col"></th>
       <th scope="col"></th>
     </tr>
   </thead>
@@ -38,6 +67,7 @@ function dl(id){
 			<td>{{name}} ({{market}})</td>
 			<td>{{active}}</td>
 			<td><button class="btn btn-sm btn-danger" onclick="dl({{_id}})">DELETE</button></td>
+			<td><a class="btn btn-info m-1" onclick="exchange_balance({market:{{market}},data:{{data}}})"><span data-feather="dollar-sign" color="#ffffff" stroke-width="3"></span></a><a class="btn btn-info m-1" onclick="exchange_orders({market:{{market}},data:{{data}}})"><span data-feather="open-book" color="#ffffff" stroke-width="3"></span></a></td>
 		</tr>
 		{{/list}}
   </tbody>

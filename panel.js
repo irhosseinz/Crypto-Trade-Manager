@@ -157,6 +157,38 @@ Panel.prototype.open_panel=function(page,data){
 				this.user.delete_api(data.remove);
 				this.res.end('ok');
 				return;
+			}else if(data && data.balances){
+				try{
+					var json=JSON.parse(data.balances);
+					var e=global.exchanges_class[json.market];
+					var ex=new e(json.data);
+					ex.balances(function(error,data){
+						if(error){
+							self.res.end(JSON.stringify({ok:false,error:error}));
+							return;
+						}
+						self.res.end(JSON.stringify({ok:true,result:data}));
+					});
+				}catch(e){
+					this.res.end(JSON.stringify({ok:false,error:'an error occured'}));
+				}
+				return;
+			}else if(data && data.orders){
+				try{
+					var json=JSON.parse(data.orders);
+					var e=global.exchanges_class[json.market];
+					var ex=new e(json.data);
+					ex.open_orders(function(error,data){
+						if(error){
+							self.res.end(JSON.stringify({ok:false,error:error}));
+							return;
+						}
+						self.res.end(JSON.stringify({ok:true,result:data}));
+					});
+				}catch(e){
+					this.res.end(JSON.stringify({ok:false,error:'an error occured'}));
+				}
+				return;
 			}
 			pData.list=this.user.apis;
 			pData.apis=[];

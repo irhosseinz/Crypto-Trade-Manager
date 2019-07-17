@@ -52,6 +52,43 @@ Exchange.prototype.order=function(data,callback){
 //   }
 	this.request('/api/v3/order','POST',tf(d),callback);
 }
+Exchange.prototype.balances=function(callback){
+	this.request('/api/v3/account','GET','timestamp='+new Date().getTime(),function(error,data){
+		if(error || !data.balances){
+			callback(error,data);
+			return;
+		}
+		var o=[];
+		for(var i in data.balances){
+			o.push({
+				symbol:data.balances[i].asset
+				,total:parseFloat(data.balances[i].free)+parseFloat(data.balances[i].locked)
+				,available:parseFloat(data.balances[i].free)
+			});
+		}
+		callback(false,o);
+	});
+}
+Exchange.prototype.open_orders=function(callback){
+	this.request('/api/v3/openOrders','GET','timestamp='+new Date().getTime(),function(error,data){
+		if(error){
+			callback(error,data);
+			return;
+		}
+		var o=[];
+		for(var i in data){
+			o.push({
+				id:data[i].orderId
+				,symbol:data[i].symbol
+				,buy:(data[i].side=='BUY')
+				,price:parseFloat(data[i].price)
+				,amount:parseFloat(data[i].origQty)
+				,filled:parseFloat(data[i].executedQty)
+			});
+		}
+		callback(false,o);
+	});
+}
 
 
 

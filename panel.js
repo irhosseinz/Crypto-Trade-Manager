@@ -170,7 +170,7 @@ Panel.prototype.open_panel=function(page,data){
 						self.res.end(JSON.stringify({ok:true,result:data}));
 					});
 				}catch(e){
-					this.res.end(JSON.stringify({ok:false,error:'an error occured'}));
+					this.res.end(JSON.stringify({ok:false,error:'an error occured'+e}));
 				}
 				return;
 			}else if(data && data.orders){
@@ -186,11 +186,15 @@ Panel.prototype.open_panel=function(page,data){
 						self.res.end(JSON.stringify({ok:true,result:data}));
 					});
 				}catch(e){
-					this.res.end(JSON.stringify({ok:false,error:'an error occured'}));
+					this.res.end(JSON.stringify({ok:false,error:'an error occured'+e}));
 				}
 				return;
 			}
 			pData.list=this.user.apis;
+			for(var i in pData.list){
+				pData.list[i].api=JSON.stringify({market:pData.list[i].market
+					,data:pData.list[i].data});
+			}
 			pData.apis=[];
 			pData.inputs=[];
 			for(var i in global.config.APIS){

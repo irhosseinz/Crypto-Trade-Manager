@@ -46,7 +46,7 @@ function dl(id){
 </table>
 <form method="post" action="exchanger.html" id="form">
 	<div class="form-group">
-		<label for="exchanger">Exchanger Name</label>
+		<label for="exchanger">Api Type</label>
 		<select class="form-control" id="exchanger" name="exchanger" onchange="$('.exchangerIn').hide();$('.'+this.value).show();" required>
     		<option></option>
 		{{#apis}}

@@ -13,6 +13,7 @@ This app helps you set some watchers on crypto market, in a way that if a coin r
 * __Add Unlimited Trackers__: tracker is used for monitoring market for certain prices and sell or buy when that prices reachs, When a condition occured these actions could be performed:
 	* __Market Sell/Buy__: Instant Sell or Buy that coin in any available price
 	* __Limit Sell/Buy__: Creates an order in specific price
+	* __Cancel a Trade__: Delete an Active Trade
 * __Orders History__: you can see your buy and sell history there
 
 ## Exchanges

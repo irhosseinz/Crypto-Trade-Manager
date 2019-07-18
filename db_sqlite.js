@@ -31,7 +31,7 @@ function DB(){
 			+", amount real not null"
 			+", track text not null"
 			+", action text not null"
-			+", action_price text null"
+			+", action_param text null"
 			+", status integer default 0"
 			+", active integer default 1"
 			+")");
@@ -75,7 +75,7 @@ DB.prototype.saveApi=function(user,market,name,data,callback){
 	stmt.finalize();
 };
 DB.prototype.saveTrack=function(data,callback){
-	var stmt=this.db.prepare("INSERT INTO tracks(user,api,market,pair,date,amount,track,action,action_price) VALUES (?,?,?,?,?,?,?,?,?)");
+	var stmt=this.db.prepare("INSERT INTO tracks(user,api,market,pair,date,amount,track,action,action_param) VALUES (?,?,?,?,?,?,?,?,?)");
 	stmt.run(data.user,data.api,data.market,data.pair,new Date().getTime(),data.amount,JSON.stringify(data.track),data.action,data.action_price,function(err){
 				if(err){
 					callback(err);

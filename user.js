@@ -17,6 +17,10 @@ User.prototype.set_login=function(data){
 		if(err){
 			return;
 		}
+		for(var i in d){
+			d[i].api=JSON.stringify({market:d[i].market
+					,data:d[i].data});
+		}
 		self.apis=d;
 	});
 	global.db.getTracks(data._id,function(err,d){
@@ -72,7 +76,9 @@ User.prototype.add_api=function(name,market,data,callback){
 		}
 		if(callback)
 			callback(false,id);
-		self.apis.push({_id:id,name:name,market:market,data:data});
+		self.apis.push({_id:id,name:name,market:market,data:data
+			,api:JSON.stringify({market:market,data:data})
+			});
 	})
 }
 User.prototype.delete_api=function(id){

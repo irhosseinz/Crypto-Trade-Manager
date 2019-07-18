@@ -39,7 +39,7 @@ function DB(){
 			+", amount varchar(50) not null"
 			+", track varchar(255) not null"
 			+", action varchar(30) not null"
-			+", action_price varchar(50) null"
+			+", action_param varchar(50) null"
 			+", status int(2) default 0"
 			+", active int(2) default 1"
 			  +",PRIMARY KEY (`_id`)"
@@ -87,7 +87,7 @@ DB.prototype.saveApi=function(user,market,name,data,callback){
 			});
 };
 DB.prototype.saveTrack=function(data,callback){
-	this.db.query("INSERT INTO tracks(user,api,market,pair,date,amount,track,action,action_price) VALUES (?,?,?,?,?,?,?,?,?)"
+	this.db.query("INSERT INTO tracks(user,api,market,pair,date,amount,track,action,action_param) VALUES (?,?,?,?,?,?,?,?,?)"
 		,[data.user,data.api,data.market,data.pair,new Date().getTime(),data.amount,JSON.stringify(data.track),data.action,data.action_price]
 		,function(err,result){
 				if(err){

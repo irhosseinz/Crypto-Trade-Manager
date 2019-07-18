@@ -20,47 +20,6 @@ function dl(id){
 		$('#item'+id).hide();
 	});
 }
-function formatPrice(v) {
-	return parseFloat(v).toFixed(12).replace(/\.?0+$/,'');
-}
-function exchange_balance(api){
-	$('#modal_action').attr("disabled", true);
-	$('#modal_title').text('Your Balances');
-	$('#modal_body').text('getting data. please wait..');
-	$('#modal').modal();
-	$.post("exchanger.html",'balances='+encodeURIComponent(JSON.stringify(api)),function( result ) {
-		if(!result.ok){
-			$('#modal_body').text('ERROR:'+result.error);
-			return;
-		}
-		var data=result.result;
-		var html='<table class="table table-striped"><thead><tr><th scope="col">Symbol</th><th scope="col">Avaiable</th><th scope="col">Total</th></tr></thead><tbody>';
-		for(var i in data){
-			html+='<tr><th scope="row">'+data[i].symbol+'</th><td>'+formatPrice(data[i].available)+'</td><td>'+formatPrice(data[i].total)+'</td></tr>';
-		}
-		html+='</tbody></table>';
-		$('#modal_body').html(html);
-	},'json');
-}
-function exchange_orders(api){
-	$('#modal_action').attr("disabled", true);
-	$('#modal_title').text('Your Open Trades');
-	$('#modal_body').text('getting data. please wait..');
-	$('#modal').modal();
-	$.post("exchanger.html",'orders='+encodeURIComponent(JSON.stringify(api)),function( result ) {
-		if(!result.ok){
-			$('#modal_body').text('ERROR:'+result.error);
-			return;
-		}
-		var data=result.result;
-		var html='<table class="table table-striped"><thead><tr><th scope="col">Symbol</th><th scope="col">Price</th><th scope="col">Quantity</th></tr></thead><tbody>';
-		for(var i in data){
-			html+='<tr class="table-'+(data[i].buy?'success':'danger')+'"><th scope="row">'+data[i].symbol+'</th><td>'+formatPrice(data[i].price)+'</td><td>'+formatPrice(data[i].amount)+(data[i].filled?' (-'+formatPrice(data[i].filled)+')':'')+'</td></tr>';
-		}
-		html+='</tbody></table>';
-		$('#modal_body').html(html);
-	},'json');
-}
 </script>
 <h1>Your Apis</h1>
 <table class="table table-striped">

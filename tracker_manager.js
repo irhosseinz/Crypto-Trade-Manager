@@ -32,6 +32,10 @@ Tracker.prototype.callback=function(track_id,pos_id){
 		var ex=require('./exchanger/'+data.market+'.js');
 		var e=new ex(data.api_data);
 		var action=data.action.split('_');
+		if(action[0]=='cancel'){
+			e.delete_order(data.action_param);
+			return;
+		}
 		var order={
 			amount:data.amount
 			,market:(action[0]=='market')
@@ -40,7 +44,7 @@ Tracker.prototype.callback=function(track_id,pos_id){
 			,price:data.track[data.track.length-1]
 			};
 		if(action[0]=='limit')
-			order.price=parseFloat(data.action_price);
+			order.price=parseFloat(data.action_param);
 		e.order(order,function(error,d){
 			console.log(d);
 			global.db.saveTrade({

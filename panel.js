@@ -99,7 +99,8 @@ Panel.prototype.open_panel=function(page,data){
 			pData.apis=[];
 			for(var i in this.user.apis){
 				var a=this.user.apis[i];
-				pData.apis.push({_id:a._id+"_"+a.market,name:a.name+" ("+a.market+")"});
+				pData.apis.push({_id:a._id+"_"+a.market
+					,name:a.name+" ("+a.market+")",api:a.api});
 			}
 			if(data && data.api){
 				var api=data.api.split('_'),a=global.config.APIS[data.exchanger];
@@ -112,6 +113,9 @@ Panel.prototype.open_panel=function(page,data){
 					,action:data.action
 					,action_price:data.trade_price
 				};
+				if(d.action=='cancel'){
+					d.action_price=data.order_id;
+				}
 				this.user.add_tracker(d,function(error,id){
 					pData.list=self.user.tracks;
 					if(error){
@@ -191,10 +195,6 @@ Panel.prototype.open_panel=function(page,data){
 				return;
 			}
 			pData.list=this.user.apis;
-			for(var i in pData.list){
-				pData.list[i].api=JSON.stringify({market:pData.list[i].market
-					,data:pData.list[i].data});
-			}
 			pData.apis=[];
 			pData.inputs=[];
 			for(var i in global.config.APIS){

@@ -36,11 +36,14 @@ Exchange.prototype.balances=function(callback){
 		}
 		var o=[];
 		for(var i in data){
-			o.push({
+			var b={
 				symbol:data[i].currencySymbol
 				,total:parseFloat(data[i].total)
 				,available:parseFloat(data[i].available)
-			});
+			};
+			if(b.total==0)
+				continue;
+			o.push(b);
 		}
 		callback(false,o);
 	});

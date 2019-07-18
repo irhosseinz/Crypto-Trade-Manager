@@ -33,14 +33,17 @@ Exchange.prototype.round=function(num,up){
 	else
 		return Math.floor(num*1e8)/1e8;
 }
+Exchange.prototype.delete_order=function(id,callback){
+	var d=id.split('#');
+	this.request('/api/v3/order','DELETE','symbol='+d[0]+'&orderId='+d[1],callback);
+}
 Exchange.prototype.order=function(data,callback){
 	var d={
 		"symbol": data.pair,
 		"side": (data.buy?'BUY':'SELL'),
 		"type": "LIMIT",
 		"quantity": parseFloat(data.amount),
-		"price": parseFloat(data.price),
-		"timestamp": new Date().getTime()
+		"price": parseFloat(data.price)
 		};
 	if(data.market){
 		d.type='MARKET';
@@ -53,24 +56,27 @@ Exchange.prototype.order=function(data,callback){
 	this.request('/api/v3/order','POST',tf(d),callback);
 }
 Exchange.prototype.balances=function(callback){
-	this.request('/api/v3/account','GET','timestamp='+new Date().getTime(),function(error,data){
+	this.request('/api/v3/account','GET','',function(error,data){
 		if(error || !data.balances){
 			callback(error,data);
 			return;
 		}
 		var o=[];
 		for(var i in data.balances){
-			o.push({
+			var b={
 				symbol:data.balances[i].asset
 				,total:parseFloat(data.balances[i].free)+parseFloat(data.balances[i].locked)
 				,available:parseFloat(data.balances[i].free)
-			});
+			};
+			if(b.total==0)
+				continue;
+			o.push(b);
 		}
 		callback(false,o);
 	});
 }
 Exchange.prototype.open_orders=function(callback){
-	this.request('/api/v3/openOrders','GET','timestamp='+new Date().getTime(),function(error,data){
+	this.request('/api/v3/openOrders','GET','',function(error,data){
 		if(error){
 			callback(error,data);
 			return;
@@ -78,7 +84,7 @@ Exchange.prototype.open_orders=function(callback){
 		var o=[];
 		for(var i in data){
 			o.push({
-				id:data[i].orderId
+				id:data[i].symbol+"#"+data[i].orderId
 				,symbol:data[i].symbol
 				,buy:(data[i].side=='BUY')
 				,price:parseFloat(data[i].price)
@@ -96,12 +102,22 @@ Exchange.prototype.request=function(uri,method,content,callback){
 	const https = require('https');
 	var timestamp=new Date().getTime();
 	var headers={};
+	if(content){
+		content+='&timestamp='+timestamp;
+	}else{
+		content='timestamp='+timestamp;
+	}
 	if(this.api){
 		headers=headers={
 			'X-MBX-APIKEY':this.api.key
 		};
-		headers['Api-Signature']=CryptoJS.HmacSHA512(content
+		var signature=CryptoJS.HmacSHA256(content
 				, this.api.secret).toString(CryptoJS.enc.Hex);
+		if(content){
+			content+='&signature='+signature;
+		}else{
+			content='signature='+signature;
+		}
 	}
 	if(content)
 		headers['Content-Type']='application/x-www-form-urlencoded';
@@ -112,6 +128,9 @@ Exchange.prototype.request=function(uri,method,content,callback){
 		path: uri
 		,headers:headers
 	};
+	if(content && method=='GET'){
+		options.path+="?"+content;
+	}
 	var req = https.request(options, function(res) {
 //		console.log('STATUS: ' + res.statusCode);
 //		console.log('HEADERS: ' + JSON.stringify(res.headers));
@@ -137,7 +156,7 @@ Exchange.prototype.request=function(uri,method,content,callback){
 		console.log('ERROR: ' + e.message);
 	});
 	
-	if(content)
+	if(content && method!='GET')
 		req.write(content);
 	req.end();
 }

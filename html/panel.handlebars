@@ -30,6 +30,43 @@ $( document ).ready(function(){
 		}
 	});
 	$('[data-toggle="popover"]').popover();
+	$('#exchanger').change(function(){
+		var v=this.value.split('_');
+		if(v.length<2){
+			$('#exchanger_balance').hide();
+		}else{
+			$('#exchanger_balance').show();
+		}
+		$('#e_name').val(v[1]);
+	});
+	$('#action').change(function(){
+		var v=this.value.split('_');
+		switch(v[0]){
+			case 'limit':
+				$('#trade_price0').show();
+				$('#trade_order_id').hide();
+				break;
+			case 'cancel':
+				$('#trade_price0').hide();
+				$('#trade_order_id').show();
+				break;
+			default:
+				$('#trade_price0').hide();
+				$('#trade_order_id').hide();
+				break;
+		}
+	});
+	$('#exchanger_balance').click(function(){
+		var api=$('#exchanger option:selected').attr('api');
+		exchange_balance(api);
+	});
+	$('#order_select').click(function(){
+		var api=$('#exchanger option:selected').attr('api');
+		exchange_orders(api,function(id,title){
+			$('#order_id').val(id);
+			$('#order_title').html(title);
+		});
+	});
 });
 function dl(market,pair,id){
 	$.post("panel.html",'market='+market+'&pair='+pair+'&remove='+id,function( data ) {
@@ -46,6 +83,7 @@ function dl(market,pair,id){
       <th scope="col">Symbol</th>
       <th scope="col">Price</th>
       <th scope="col">Amount</th>
+      <th scope="col">Action</th>
       <th scope="col">Status</th>
       <th scope="col"></th>
     </tr>
@@ -58,6 +96,7 @@ function dl(market,pair,id){
 			<td>{{pair}}</td>
 			<td>{{formatPrice track.[0]}}</td>
 			<td>{{formatPrice amount}}</td>
+			<td>{{action}}</td>
 			<td>{{status}}</td>
 			<td><button class="btn btn-sm btn-danger" onclick="dl('{{market}}','{{pair}}',{{_id}})">DELETE</button></td>
 		</tr>
@@ -66,11 +105,11 @@ function dl(market,pair,id){
 </table>
 <form method="post" action="panel.html" id="form">
 	<div class="form-group">
-		<label for="exchanger">Exchanger Name</label><a href="exchanger.html" class="btn btn-outline-success btn-sm">Add</a>
-		<select class="form-control" id="exchanger" name="api" required onchange="$('#e_name').val(this.value.split('_')[1])">
+		<label for="exchanger">Exchanger Name</label><a href="exchanger.html" class="btn btn-outline-success btn-sm">Add</a><a class="btn btn-outline-info btn-sm ml-1" id="exchanger_balance" style="display:none">Balance</a>
+		<select class="form-control" id="exchanger" name="api" required>
     		<option></option>
 		{{#apis}}
-			<option value="{{_id}}">{{name}}</option>
+			<option value="{{_id}}" api='{{{api}}}'>{{name}}</option>
 		{{/apis}}
 		</select>
 		<input type="hidden" class="form-control" id="e_name"/>
@@ -90,17 +129,25 @@ function dl(market,pair,id){
 	</div>
 	<div class="form-group">
 		<label for="amount">What to do?</label><a tabindex="-2" class="badge badge-info" role="button" data-toggle="popover" data-trigger="focus" title="Hint" data-content="Market Buy and Sell performs an immediate trade with any available price, and Limit buy and Sell create a trade at a specific price">?</a>
-		<select class="form-control" name="action" required onchange="if(this.value.split('_')[0]=='limit')$('#trade_price0').show();else $('#trade_price0').hide();">
+		<select class="form-control" name="action" required id="action">
 			<option></option>
 			<option value="market_buy">Market Buy</option>
 			<option value="market_sell">Market Sell</option>
 			<option value="limit_buy">Limit Buy</option>
 			<option value="limit_sell">Limit Sell</option>
+			<option value="cancel">Cancel a Trade</option>
 		</select>
 	</div>
 	<div class="form-group" id="trade_price0" style="display:none">
 		<label for="price">Price to Trade</label>
 		<input type="number" class="form-control" id="trade_price" name="trade_price" step="any" required/>
+	</div>
+	<div class="form-group" id="trade_order_id" style="display:none">
+		<div class="row alert alert-secondary rounded p-3 m-2">
+			<a class="btn btn-warning btn-sm row cold-md-2 ml-2" id="order_select">Select Trade</a>
+			<span class="col-md-10 ml-2 align-middle text-info" id="order_title"></span>
+		</div>
+		<input type="hidden" id="order_id" name="order_id"/>
 	</div>
 	<input type="submit" class="btn btn-primary" value="SEND"/>
 </form>

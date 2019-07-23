@@ -10,11 +10,12 @@ User.prototype.get_cookie=function(){
 	global.cache.set('logins',this.logined._id,{cookie:cookie,user:this});
 	return this.logined._id+"_"+cookie;
 }
-User.prototype.set_login=function(data){
-	this.logined=data;
+User.prototype.getApis=function(callback){
 	var self=this;
-	global.db.getApis(data._id,function(err,d){
+	global.db.getApis(this.logined._id,function(err,d){
 		if(err){
+			if(callback)
+				callback(err,d);
 			return;
 		}
 		for(var i in d){
@@ -22,13 +23,25 @@ User.prototype.set_login=function(data){
 					,data:d[i].data});
 		}
 		self.apis=d;
+		if(callback)
+			callback(false,d);
 	});
-	global.db.getTracks(data._id,function(err,d){
+}
+User.prototype.getTracks=function(callback){
+	var self=this;
+	global.db.getTracks(this.logined._id,function(err,d){
+		if(callback)
+			callback(err,d);
 		if(err){
 			return;
 		}
 		self.tracks=d;
 	});
+}
+User.prototype.set_login=function(data){
+	this.logined=data;
+	this.getApis();
+	this.getTracks();
 }
 User.prototype.register=function(username,password,callback){
 	var self=this;

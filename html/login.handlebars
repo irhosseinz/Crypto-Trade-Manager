@@ -12,5 +12,18 @@
     <input type="checkbox" class="form-check-input" name="remember" id="input_remember"/>
     <label for="input_remember" class="form-check-label">Remember Me</label>
   </div>
-  <br/><button type="submit" class="btn btn-primary my-1">Submit</button>
+  <input type="hidden" name="captcha" id="captcha"/>
+  <br/><button type="submit" class="btn btn-primary my-1" id="submit">Submit</button>
+{{#if recaptcha_v3}}
+	<script src="https://www.google.com/recaptcha/api.js?render={{recaptcha_v3}}"></script>
+	<script type="text/javascript">
+	$("#submit").attr("disabled",true);
+	grecaptcha.ready(function() {
+		grecaptcha.execute("{{recaptcha_v3}}", {action: "LOGIN"}).then(function(token) {
+		   $("#captcha").val(token);
+		   $("#submit").attr("disabled",false);
+		});
+	});
+	</script>
+{{/if}}
 </form>

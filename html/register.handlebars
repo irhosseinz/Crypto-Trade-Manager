@@ -8,8 +8,21 @@
     <label for="input_password">Password</label>
     <input type="password" class="form-control" name="password" required id="input_password"/>
   </div>
-  <br/><button type="submit" class="btn btn-primary my-1">Submit</button>
+  <input type="hidden" name="captcha" id="captcha"/>
+  <br/><button type="submit" class="btn btn-primary my-1" id="submit">Submit</button>
 </form>
+{{#if recaptcha_v3}}
+	<script src="https://www.google.com/recaptcha/api.js?render={{recaptcha_v3}}"></script>
+	<script type="text/javascript">
+	$("#submit").attr("disabled",true);
+	grecaptcha.ready(function() {
+		grecaptcha.execute("{{recaptcha_v3}}", {action: "REGISTER"}).then(function(token) {
+		   $("#captcha").val(token);
+		   $("#submit").attr("disabled",false);
+		});
+	});
+	</script>
+{{/if}}
 <script type="text/javascript">
 $( document ).ready(function(){
 	$("#form").validate({

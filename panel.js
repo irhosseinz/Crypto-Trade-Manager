@@ -57,15 +57,30 @@ Panel.prototype.open_panel=function(page,data){
 				this.open_panel('panel');
 				break;
 			}
+			if(global.config.recaptcha_v3.active){
+				pData.recaptcha_v3=global.config.recaptcha_v3.key;
+			}
 			if(data){
-				this.login(data.username,data.password,function(error,d){
-					if(error){
+				global.tools.recaptcha_v3(data.captcha,function(err,recaptcha){
+					if(err){
 						pData.error=error;
 						self.res.render('login',pData);
 						return;
 					}
-					self.res.cookie('login',self.get_cookie(),{ maxAge: global.config.cookie_life, httpOnly: true });
-					self.res.redirect('panel.html');
+					if(!recaptcha){
+						pData.error='Are you A Bot?!?';
+						self.res.render('login',pData);
+						return;
+					}
+					self.login(data.username,data.password,function(error,d){
+						if(error){
+							pData.error=error;
+							self.res.render('login',pData);
+							return;
+						}
+						self.res.cookie('login',self.get_cookie(),{ maxAge: global.config.cookie_life, httpOnly: true });
+						self.res.redirect('panel.html');
+					});
 				});
 			}else
 				this.res.render('login',pData);
@@ -76,15 +91,30 @@ Panel.prototype.open_panel=function(page,data){
 				this.open_panel('panel');
 				break;
 			}
+			if(global.config.recaptcha_v3.active){
+				pData.recaptcha_v3=global.config.recaptcha_v3.key;
+			}
 			if(data){
-				this.register(data.username,data.password,function(error,d){
-					if(error){
+				global.tools.recaptcha_v3(data.captcha,function(err,recaptcha){
+					if(err){
 						pData.error=error;
 						self.res.render('register',pData);
 						return;
 					}
-					self.res.cookie('login',self.get_cookie(),{ maxAge: global.config.cookie_life, httpOnly: true });
-					self.res.redirect('panel.html');
+					if(!recaptcha){
+						pData.error='Are you A Bot?!?';
+						self.res.render('register',pData);
+						return;
+					}
+					self.register(data.username,data.password,function(error,d){
+						if(error){
+							pData.error=error;
+							self.res.render('register',pData);
+							return;
+						}
+						self.res.cookie('login',self.get_cookie(),{ maxAge: global.config.cookie_life, httpOnly: true });
+						self.res.redirect('panel.html');
+					});
 				});
 			}else
 				this.res.render('register',pData);
@@ -133,8 +163,14 @@ Panel.prototype.open_panel=function(page,data){
 				this.res.end('ok');
 				return;
 			}
-			pData.list=this.user.tracks;
-			this.res.render('panel',pData);
+			this.user.getTracks(function(err,d){
+				if(err){
+					pData.error=err;
+				}else{
+					pData.list=d;
+				}
+				self.res.render('panel',pData);
+			});
 			break;
 		case 'exchanger':
 			pData.title2='Exchanger';

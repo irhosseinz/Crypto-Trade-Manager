@@ -5,6 +5,7 @@ This app helps you set some watchers on crypto market, in a way that if a coin r
 ## Usage
 * __Stop Loss__: trade based on your stop-loss strategy 
 * __Buy Low__: Buy a Coin in Lowest price you think can reach!
+* __Monitor The Market__: It Can Monitor The Market And A Chart Reachs A Price, You'll be Notified Throught Telegram Bot
 * etc..
 
 ## Main features
@@ -15,6 +16,7 @@ This app helps you set some watchers on crypto market, in a way that if a coin r
 	* __Market Sell/Buy__: Instant Sell or Buy that coin in any available price
 	* __Limit Sell/Buy__: Creates an order in specific price
 	* __Cancel a Trade__: Delete an Active Trade
+	* __Just Notify__: It Just Notifies You In Telegram Bot When Event Occures
 * __Orders History__: you can see your buy and sell history there
 
 ## Exchanges
@@ -25,11 +27,13 @@ These exchanges are supported:
 ## Installation
 To use this app you need a system with [Node-JS](https://nodejs.org/en/download/) installed
 * in app folder run this command: `npm install`
+* rename `config_sample.js` to `config.js`. then fill the config file
 * start app with `node index.js` (you can use `pm2` for standard usage)
 * open your browser and open this url: `https://localhost:1040` (if you are running the app on a server replace `localhost` with your server IP, and open port 1040 on your firewall)
 * Register for a account and login
 
 ## Coming Features
+* Support for Margin Trading
 If you had any opinions to make this project better, please let me know!
 > APP IS STILL IN __BETA__ RELEASE, _use it catefully_
 

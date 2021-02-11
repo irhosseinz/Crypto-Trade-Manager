@@ -32,7 +32,7 @@ Tracker.prototype.callback=function(track_id,pos_id){
 		var action=data.action.split('_');
 		global.db.getUserByID(data.user,function(error,uData){
 			if(!error && uData){
-				global.Telegram.setMessage(uData.tid,"#"+data.action.toUpperCase().replace('_',' #')+"\n#"+data.pair+" "+JSON.stringify(data.track));
+				global.Telegram.setMessage(uData.tid,"#"+data.action.toUpperCase().replace('_',' #')+"\n#"+data.pair+" "+JSON.stringify(data.track)+"\n📄"+data.comment);
 			}
 		})
 		if(action[0]=='notify'){

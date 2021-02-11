@@ -145,6 +145,7 @@ Panel.prototype.open_panel=function(page,data){
 					,track:[parseFloat(data.price)]
 					,action:data.action
 					,action_price:data.trade_price
+					,comment:data.comment
 				};
 				if(d.action=='cancel'){
 					d.action_price=data.order_id;

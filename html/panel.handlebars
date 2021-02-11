@@ -42,6 +42,11 @@ $( document ).ready(function(){
 	$('#action').change(function(){
 		var v=this.value.split('_');
 		switch(v[0]){
+			case 'notify':
+				$('#trade_price0').hide();
+				$('#trade_order_id').hide();
+				$('#trade_amount').hide();
+				break;
 			case 'limit':
 				$('#trade_price0').show();
 				$('#trade_order_id').hide();
@@ -103,6 +108,10 @@ function dl(market,pair,id){
 			<td>{{status}}</td>
 			<td><button class="btn btn-sm btn-danger" onclick="dl('{{market}}','{{pair}}',{{_id}})">DELETE</button></td>
 		</tr>
+		<tr id="item{{_id}}c">
+            <td></td>
+            <th colspan="7">📄Comment: {{comment}} ⤴️</th>
+		</tr>
 		{{/list}}
   </tbody>
 </table>
@@ -121,6 +130,10 @@ function dl(market,pair,id){
 		<label for="pair">Pair <h3><span class="badge badge-secondary" id="pair_name"></span></h3></label>
 		<input type="text" class="form-control" id="pair" required/>
 		<input type="hidden" class="form-control" id="pair_input" name="pair"/>
+	</div>
+	<div class="form-group">
+		<label for="price">Comment</label> <a tabindex="-2" class="badge badge-info" role="button" data-toggle="popover" data-trigger="focus" title="Hint" data-content="A Reminder Comment To Know What's this About">?</a>
+		<input type="text" class="form-control" name="comment" placeholder="Optional Comment"/>
 	</div>
 	<div class="form-group">
 		<label for="price">Target Price</label> <a tabindex="-2" class="badge badge-info" role="button" data-toggle="popover" data-trigger="focus" title="Hint" data-content="When price reaches this value, following action will be executed">?</a>

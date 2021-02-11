@@ -5,7 +5,7 @@ var Tracker=function(exchanger,pair,callback){
 	
 	console.log("STARTING Tracker at: ("+new Date()+") "+JSON.stringify(pair)+" @ "+exchanger);
 	
-	this.tracks=[];
+	this.tracks={};
 	this.callback=callback;
 }
 Tracker.prototype.start=function(){
@@ -16,7 +16,7 @@ Tracker.prototype.start=function(){
 				console.log('error on order book0:'+error);
 				return;
 			}
-//			console.log(data);
+			// console.log(data);
 			self.check_tracks(data);
 		});
 	},global.config.cycle_second*1000);
@@ -44,6 +44,9 @@ Tracker.prototype.check_tracks=function(data){
 		}
 		for(var j in this.tracks){
 			var t=this.tracks[j][0];
+			if(!t){
+				continue;
+			}
 			if((this.lastPrice<t.price && t.price<=price) || (price<=t.price && t.price<this.lastPrice)){
 				console.log('position reached:'+JSON.stringify(t));
 				this.tracks[j].shift();
@@ -51,6 +54,8 @@ Tracker.prototype.check_tracks=function(data){
 					delete this.tracks[j];
 				}
 				this.callback(j,t.pos_id);
+			}else{
+				console.log("tracking  "+this.lastPrice+" -> "+price+" -> "+t.price)
 			}
 		}
 		this.lastPrice=price;

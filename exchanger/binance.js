@@ -5,7 +5,7 @@ function Exchange(api){
 	this.api=api;
 }
 Exchange.prototype.symbol_list=function(callback){
-	this.request('/api/v1/ticker/24hr','GET','',function(error,data){
+	this.request('/api/v3/ticker/24hr','GET','',function(error,data){
 		if(error){
 			callback(error,data);
 			return;
@@ -17,10 +17,19 @@ Exchange.prototype.symbol_list=function(callback){
 					,change:data[i].priceChangePercent});
 		}
 		callback(false,d);
-	});
+	},true);
 }
 Exchange.prototype.get_trades=function(symbol,callback){
-	this.request('/api/v1/trades?symbol=symbol','GET','',callback);
+	this.request('/api/v1/trades?symbol='+symbol,'GET','',function(e,d){
+		if(e){
+			callback(e);
+			return;
+		}
+		for(var i in d){
+			d[i].rate=d[i].price;
+		}
+		callback(false,d);
+	},true);
 }
 Exchange.prototype.symbol=function(pair){
 	if(typeof pair == 'string')
@@ -43,17 +52,22 @@ Exchange.prototype.order=function(data,callback){
 		"side": (data.buy?'BUY':'SELL'),
 		"type": "LIMIT",
 		"quantity": parseFloat(data.amount),
-		"price": parseFloat(data.price)
+		"price": parseFloat(data.price),
+		timeInForce:'GTC'
 		};
 	if(data.market){
 		d.type='MARKET';
 		delete d.price;
 	}
-	const tf = require('object-to-formdata');
+	console.log(d);
+	var d2=[];
+	for(var i in d){
+		d2.push(i+"="+encodeURIComponent(d[i]));
+	}
 //   if(data.id){
 //   	d.clientOrderId=""+data.id;
 //   }
-	this.request('/api/v3/order','POST',tf(d),callback);
+	this.request('/api/v3/order','POST',d2.join("&"),callback);
 }
 Exchange.prototype.balances=function(callback){
 	this.request('/api/v3/account','GET','',function(error,data){
@@ -98,17 +112,17 @@ Exchange.prototype.open_orders=function(callback){
 
 
 
-Exchange.prototype.request=function(uri,method,content,callback){
+Exchange.prototype.request=function(uri,method,content,callback,public_api){
 	const https = require('https');
 	var timestamp=new Date().getTime();
 	var headers={};
 	if(content){
 		content+='&timestamp='+timestamp;
-	}else{
+	}else if(!public_api){
 		content='timestamp='+timestamp;
 	}
 	if(this.api){
-		headers=headers={
+		headers={
 			'X-MBX-APIKEY':this.api.key
 		};
 		var signature=CryptoJS.HmacSHA256(content
@@ -139,7 +153,7 @@ Exchange.prototype.request=function(uri,method,content,callback){
 			bodyChunks.push(chunk);
 		}).on('end', function() {
 			var body = Buffer.concat(bodyChunks);
-//			console.log('BODY: ' + body);
+			// console.log('BODY: '+content+"\n" + body);
 			if(callback){
 				try{
 					var json=JSON.parse(body);
@@ -147,7 +161,10 @@ Exchange.prototype.request=function(uri,method,content,callback){
 					callback(e,body);
 					return;
 				}
-				callback(false,json);
+				if(json.code){
+					callback(json);
+				}else
+					callback(false,json);
 			}
 		})
 	});

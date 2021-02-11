@@ -5,10 +5,13 @@ var https = require('https'),
 	exphbs = require('express-handlebars'),
 	user = require('./user.js'),
 	panel = require('./panel.js'),
-	t=require('./tracker.js');
+	t=require('./tracker.js'),
+	tel=require('./telegram.js');
+var bodyParser = require('body-parser')
 
 global.logger=require('./logger.js');
 global.config=require('./config.js');
+global.Telegram=new tel(global.config.telegram_bot.api_key);
 var db=require('./db_'+global.config.db.type+'.js');
 global.db=new db();
 
@@ -27,6 +30,8 @@ global.tools = require('./tools.js');
 var app = express();
 
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 
 var hbs = exphbs.create({
 	helpers: {
@@ -51,6 +56,7 @@ app.set('view engine', 'handlebars');
 app.set('views', __dirname+'/html/');
 
 var path = require('path');
+const Telegram = require('./telegram.js');
 app.get('/css/:file', function(req, res) {
 	res.sendFile(path.join(__dirname + '/html/css/'+req.params.file));
 });
@@ -93,6 +99,23 @@ app.post('/:page.html', function(req, res) {
 		p.error(500,e);
 		console.log(e);
 	}
+});
+global.Telegram.setWebhook(global.config.url+global.config.telegram_bot.webhook);
+app.post(global.config.telegram_bot.webhook, function(req, res) {
+	var body=req.body;
+	if(!body.message){
+		return;
+	}
+	res.set('Content-Type', 'application/json');
+	var msg={method:'sendMessage',chat_id:body.message.from.id,text:"Nothing To Do!"};
+	if(body.message && body.message.text && body.message.text.substr(0,6)=='/start'){
+		var data=body.message.text.split(' ');
+		if(data.length>1){
+			global.db.set_telegram_id(data[1],body.message.from.id);
+			msg.text="The Bot Has Activated on Your Account!";
+		}
+	}
+	res.end(JSON.stringify(msg));
 });
 
 if(global.config.https){

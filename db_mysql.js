@@ -14,6 +14,8 @@ function DB(){
 			  +"`_id` int(11) NOT NULL AUTO_INCREMENT,"
 			  +"`username` varchar(50) DEFAULT NULL,"
 			  +"`password` varchar(255) NOT NULL,"
+			  +"`secret` varchar(50) DEFAULT NULL,"
+			  +"`tid` varchar(50) DEFAULT NULL,"
 			  +"`date` bigint(15),"
 			  +"PRIMARY KEY (`_id`),"
 			  +"UNIQUE KEY `username` (`username`)"
@@ -61,8 +63,9 @@ function DB(){
 	this.db=db;
 };
 DB.prototype.newUser=function(username,password,callback){
-	this.db.query("INSERT INTO users(username,date,password) VALUES (?,?,?)"
-		,[username.toLowerCase(),new Date().getTime(),password]
+	var secret=global.tools.randomText(10);
+	this.db.query("INSERT INTO users(username,date,password,secret) VALUES (?,?,?,?)"
+		,[username.toLowerCase(),new Date().getTime(),password,secret]
 		,function(err,result){
 				if(err){
 					if(err.errno==1062){
@@ -70,9 +73,27 @@ DB.prototype.newUser=function(username,password,callback){
 					}else if(callback)
 						callback(err);
 					console.log(err);
-				}else if(callback)
-					callback(false,result.insertId);
+				}else if(callback){
+					var d={_id:result.insertId,username:username,secret:secret};
+					callback(false,d);
+				}
 			});
+};
+DB.prototype.getUserByID=function(id,callback){
+	this.db.query("SELECT * FROM users where _id=?",[id],function(error,rows){
+		if(error){
+			callback(error);
+			return;
+		}
+		callback(false,rows[0]);
+	});
+};
+DB.prototype.set_telegram_id=function(secret,tid){
+	var data=secret.split("_");
+	if(data.length<2){
+		return;
+	}
+	this.db.query("UPDATE users SET tid=? WHERE _id=? and secret=?",[tid+"",parseInt(data[0]),data[1]]);
 };
 DB.prototype.saveApi=function(user,market,name,data,callback){
 	this.db.query("INSERT INTO apis(user,name,market,date,data) VALUES (?,?,?,?,?)"

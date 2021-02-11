@@ -29,9 +29,17 @@ Tracker.prototype.callback=function(track_id,pos_id){
 			console.log('api is not active:'+data.api);
 			return;
 		}
+		var action=data.action.split('_');
+		global.db.getUserByID(data.user,function(error,uData){
+			if(!error && uData){
+				global.Telegram.setMessage(uData.tid,"#"+data.action.toUpperCase().replace('_',' #')+"\n#"+data.pair+" "+JSON.stringify(data.track));
+			}
+		})
+		if(action[0]=='notify'){
+			return;
+		}
 		var ex=require('./exchanger/'+data.market+'.js');
 		var e=new ex(data.api_data);
-		var action=data.action.split('_');
 		if(action[0]=='cancel'){
 			e.delete_order(data.action_param);
 			return;
@@ -46,6 +54,10 @@ Tracker.prototype.callback=function(track_id,pos_id){
 		if(action[0]=='limit')
 			order.price=parseFloat(data.action_param);
 		e.order(order,function(error,d){
+			if(error){
+				console.log("order error: "+JSON.stringify(error));
+				return;
+			}
 			console.log(d);
 			global.db.saveTrade({
 				user:data.user
@@ -78,6 +90,7 @@ Tracker.prototype.remove_tracker=function(market,pair,id){
 	if(this.trackers[key].remove_tracker(id)){
 		this.trackers[key].stop();
 		delete this.trackers[key];
+		console.log("Tracker Stopped: "+pair+" @ "+market);
 	}
 }
 Tracker.prototype.add_tracker=function(market,pair,id,track_data,status){

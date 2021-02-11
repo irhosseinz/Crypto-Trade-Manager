@@ -48,6 +48,9 @@ Panel.prototype.open_panel=function(page,data){
 	var path = require('path');
 	var self=this;
 	var pData={title:global.config.title,page:page};
+	if(this.user && this.user.logined && !this.user.logined.tid){
+		pData.activate_bot="https://t.me/"+global.config.telegram_bot.username+"?start="+this.user.logined._id+"_"+this.user.logined.secret;
+	}
 	switch(page){
 		case 'login':
 			pData.title2='Login';

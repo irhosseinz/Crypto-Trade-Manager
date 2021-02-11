@@ -56,7 +56,7 @@ User.prototype.register=function(username,password,callback){
 			}
 			return;
 		}
-		self.set_login({username:username,_id:data});
+		self.set_login(data);
 		if(callback)
 			callback(false,data);
 	});

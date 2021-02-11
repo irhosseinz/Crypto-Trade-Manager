@@ -94,6 +94,7 @@ Exchange.prototype.order=function(data,callback){
 		"limit": parseFloat(data.price),
 		"timeInForce": "GOOD_TIL_CANCELLED"
 		};
+	console.log(d);
 	if(data.market){
 		d.limit=this.round(d.limit*(data.buy?2:0.5));
 	}

@@ -1,4 +1,4 @@
-# Crypto Trade Manager #[LIVE VERSION](https://trader.asiapool.org/register.html)
+# Crypto Trade Manager #[LIVE VERSION](https://trader.sinbad.vip/register.html)
 This app helps you set some watchers on crypto market, in a way that if a coin reachs a price it will be traded automaticly.
 [![youtube](https://raw.githubusercontent.com/irhosseinz/Crypto-Trade-Manager/master/html/img/youtube.jpg)](https://www.youtube.com/watch?v=1THmL1ILI4Q)
 

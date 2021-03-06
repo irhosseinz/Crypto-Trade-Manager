@@ -19,6 +19,22 @@ Exchange.prototype.symbol_list=function(callback){
 		callback(false,d);
 	},true);
 }
+Exchange.prototype.prices=function(){
+	var self=this;
+	return new Promise((success,fail)=>{
+		self.symbol_list(function(error,resp){
+			if(error){
+				fail(error);
+				return;
+			}
+			var out={};
+			for(var i in resp){
+				out[resp[i].symbol]=resp[i];
+			}
+			success(out);
+		})
+	})
+}
 Exchange.prototype.get_trades=function(symbol,callback){
 	this.request('/api/v1/trades?symbol='+symbol,'GET','',function(e,d){
 		if(e){
@@ -121,7 +137,7 @@ Exchange.prototype.request=function(uri,method,content,callback,public_api){
 	}else if(!public_api){
 		content='timestamp='+timestamp;
 	}
-	if(this.api){
+	if(this.api && !public_api){
 		headers={
 			'X-MBX-APIKEY':this.api.key
 		};

@@ -19,6 +19,22 @@ Exchange.prototype.symbol_list=function(callback){
 		callback(false,d);
 	});
 }
+Exchange.prototype.prices=function(){
+	var self=this;
+	return new Promise((success,fail)=>{
+		self.symbol_list(function(error,resp){
+			if(error){
+				fail(error);
+				return;
+			}
+			var out={};
+			for(var i in resp){
+				out[resp[i].symbol]=resp[i];
+			}
+			success(out);
+		})
+	})
+}
 Exchange.prototype.summary=function(symbol,callback){
 	this.request('/v3/markets/'+symbol+'/summary','GET','',callback);
 }

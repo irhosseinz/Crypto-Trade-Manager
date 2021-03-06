@@ -14,7 +14,15 @@ var Tracker=function(){
 Tracker.prototype.get_key=function(market,pair){
 	return market+'_'+pair;
 }
+Tracker.prototype.notify_user=function(user_id,text){
+	global.db.getUserByID(user_id,function(error,uData){
+		if(!error && uData){
+			global.Telegram.setMessage(text);
+		}
+	})
+}
 Tracker.prototype.callback=function(track_id,pos_id){
+	var self=this;
 	global.db.getTrack(track_id,function(error,data){
 		if(error){
 			console.log('manager getTrack error:'+error);
@@ -30,11 +38,7 @@ Tracker.prototype.callback=function(track_id,pos_id){
 			return;
 		}
 		var action=data.action.split('_');
-		global.db.getUserByID(data.user,function(error,uData){
-			if(!error && uData){
-				global.Telegram.setMessage(uData.tid,"#"+data.action.toUpperCase().replace('_',' #')+"\n#"+data.pair+" "+JSON.stringify(data.track)+"\n📄"+data.comment);
-			}
-		})
+		self.notify_user(data.user,uData.tid,"#"+data.action.toUpperCase().replace('_',' #')+"\n#"+data.pair+" "+JSON.stringify(data.track)+"\n📄"+data.comment);
 		if(action[0]=='notify'){
 			return;
 		}
@@ -55,10 +59,12 @@ Tracker.prototype.callback=function(track_id,pos_id){
 			order.price=parseFloat(data.action_param);
 		e.order(order,function(error,d){
 			if(error){
-				console.log("order error: "+JSON.stringify(error));
+				console.log("order error: "+error);
+				self.notify_user(data.user,uData.tid,"#ORDER #ERROR\n#"+data.pair+" "+error);
 				return;
 			}
-			console.log(d);
+			// console.log(d);
+			self.notify_user(data.user,uData.tid,"#ORDER\n#"+JSON.stringify(d,null,2));
 			global.db.saveTrade({
 				user:data.user
 				,symbol:data.pair

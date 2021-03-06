@@ -211,7 +211,20 @@ Panel.prototype.open_panel=function(page,data){
 							self.res.end(JSON.stringify({ok:false,error:error}));
 							return;
 						}
-						self.res.end(JSON.stringify({ok:true,result:data}));
+						ex.prices().then(prices=>{
+							for(var i in data){
+								var pair=ex.symbol([data[i].symbol,'USDT']);
+								if(!(pair in prices)){
+									continue;
+								}
+								prices[pair].capital='USDT';
+								data[i].price=prices[pair];
+							}
+							self.res.end(JSON.stringify({ok:true,result:data}));
+						}).catch(error=>{
+							console.log(error);
+							self.res.end(JSON.stringify({ok:true,result:data}));
+						})
 					});
 				}catch(e){
 					this.res.end(JSON.stringify({ok:false,error:'an error occured'+e}));
@@ -227,7 +240,19 @@ Panel.prototype.open_panel=function(page,data){
 							self.res.end(JSON.stringify({ok:false,error:error}));
 							return;
 						}
-						self.res.end(JSON.stringify({ok:true,result:data}));
+						ex.prices().then(prices=>{
+							for(var i in data){
+								var pair=data[i].symbol;
+								if(!(pair in prices)){
+									continue;
+								}
+								data[i].market=prices[pair];
+							}
+							self.res.end(JSON.stringify({ok:true,result:data}));
+						}).catch(error=>{
+							console.log(error);
+							self.res.end(JSON.stringify({ok:true,result:data}));
+						})
 					});
 				}catch(e){
 					this.res.end(JSON.stringify({ok:false,error:'an error occured'+e}));

@@ -12,6 +12,7 @@ This app helps you set some watchers on crypto market, in a way that if a coin r
 * __Simple Authentication__: there is simple registeration and login, so app could be used for multiple users
 * __Recaptcha Support__: You can get [Recaptcha V3](https://www.google.com/recaptcha/admin) api Keys and enter it in `config.js`, so recaptcha will be used in _background_ on login and register.
 * __Add Unlimited API__: you can add unlimited numbers of each supported apis if you have multiple accounts
+* __Market Tools__: You Can See Your Balances And Open Trades in The App
 * __Add Unlimited Trackers__: tracker is used for monitoring market for certain prices and sell or buy when that prices reachs, When a condition occured these actions could be performed:
 	* __Market Sell/Buy__: Instant Sell or Buy that coin in any available price
 	* __Limit Sell/Buy__: Creates an order in specific price

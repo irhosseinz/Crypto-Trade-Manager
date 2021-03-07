@@ -47,7 +47,7 @@ Tracker.prototype.check_tracks=function(data){
 			if(!t){
 				continue;
 			}
-			if((this.lastPrice<t.price && t.price<=price) || (price<=t.price && t.price<this.lastPrice)){
+			if(t.price==='now' || (this.lastPrice<t.price && t.price<=price) || (price<=t.price && t.price<this.lastPrice)){
 				console.log('position reached:'+JSON.stringify(t));
 				this.tracks[j].shift();
 				if(this.tracks[j].length==0){
@@ -55,7 +55,7 @@ Tracker.prototype.check_tracks=function(data){
 				}
 				this.callback(j,t.pos_id);
 			}else{
-				console.log("tracking  "+this.lastPrice+" -> "+price+" -> "+t.price)
+				// console.log("tracking  "+this.lastPrice+" -> "+price+" -> "+t.price)
 			}
 		}
 		this.lastPrice=price;

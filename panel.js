@@ -147,6 +147,9 @@ Panel.prototype.open_panel=function(page,data){
 					,action_price:data.trade_price
 					,comment:data.comment
 				};
+				if(data.justdoit){
+					d.track=['now'];
+				}
 				if(d.action=='cancel'){
 					d.action_price=data.order_id;
 				}
@@ -158,7 +161,7 @@ Panel.prototype.open_panel=function(page,data){
 					}else{
 						self.res.render('panel',pData);
 					}
-					global.manager.add_tracker(d.market,d.pair,id,d.track,0);
+					global.manager.execute_track(d);
 				});
 				return;
 			}else if(data && data.remove){

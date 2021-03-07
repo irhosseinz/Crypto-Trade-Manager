@@ -74,6 +74,7 @@ Exchange.prototype.order=function(data,callback){
 	if(data.market){
 		d.type='MARKET';
 		delete d.price;
+		delete d.timeInForce;
 	}
 	console.log(d);
 	var d2=[];
@@ -83,7 +84,12 @@ Exchange.prototype.order=function(data,callback){
 //   if(data.id){
 //   	d.clientOrderId=""+data.id;
 //   }
-	this.request('/api/v3/order','POST',d2.join("&"),callback);
+	this.request('/api/v3/order','POST',d2.join("&"),function(error,resp){
+		if(!error && resp.orderId){
+			resp.id=resp.orderId;
+		}
+		callback(error,resp);
+	});
 }
 Exchange.prototype.balances=function(callback){
 	this.request('/api/v3/account','GET','',function(error,data){

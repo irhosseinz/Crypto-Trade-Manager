@@ -136,7 +136,7 @@ function dl(market,pair,id){
 		<input type="text" class="form-control" name="comment" placeholder="Optional Comment"/>
 	</div>
 	<div class="form-group">
-		<label for="price">Target Price</label> <a tabindex="-2" class="badge badge-info" role="button" data-toggle="popover" data-trigger="focus" title="Hint" data-content="When price reaches this value, following action will be executed">?</a>
+		<label for="price">Target Price</label> <a tabindex="-2" class="badge badge-info" role="button" data-toggle="popover" data-trigger="focus" title="Hint" data-content="When price reaches this value, following action will be executed.">?</a> <div class="checkbox-inline"><input type="checkbox" id="justdoit" name="justdoit" onchange="$(price).prop( 'disabled', $(this).is(':checked') )"/>Just Do It!</div>
 		<input type="number" class="form-control" id="price" name="price" step="any" required/>
 	</div>
 	<div class="form-group">

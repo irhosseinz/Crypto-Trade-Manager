@@ -1,4 +1,4 @@
-var Tracker=function(){
+var TrackerManager=function(){
 	this.trackers={};
 	console.log("STARTING TrackerManager at: ("+new Date()+") ");
 	this.load_trackers();
@@ -11,18 +11,18 @@ var Tracker=function(){
 		global.exchanges[i]=new e();
 	}
 }
-Tracker.prototype.get_key=function(market,pair){
+TrackerManager.prototype.get_key=function(market,pair){
 	return market+'_'+pair;
 }
-Tracker.prototype.notify_user=function(user_id,text){
+TrackerManager.prototype.notify_user=function(user_id,text){
 	global.db.getUserByID(user_id,function(error,uData){
 		if(!error && uData){
-			global.Telegram.setMessage(text);
+			global.Telegram.setMessage(uData.tid,text);
 		}
 	})
 }
-Tracker.prototype.callback=function(track_id,pos_id){
-	var self=this;
+TrackerManager.prototype.callback=function(track_id,pos_id){
+	var self=TrackerManager.prototype;
 	global.db.getTrack(track_id,function(error,data){
 		if(error){
 			console.log('manager getTrack error:'+error);
@@ -37,48 +37,52 @@ Tracker.prototype.callback=function(track_id,pos_id){
 			console.log('api is not active:'+data.api);
 			return;
 		}
-		var action=data.action.split('_');
-		self.notify_user(data.user,uData.tid,"#"+data.action.toUpperCase().replace('_',' #')+"\n#"+data.pair+" "+JSON.stringify(data.track)+"\n📄"+data.comment);
-		if(action[0]=='notify'){
-			return;
-		}
-		var ex=require('./exchanger/'+data.market+'.js');
-		var e=new ex(data.api_data);
-		if(action[0]=='cancel'){
-			e.delete_order(data.action_param);
-			return;
-		}
-		var order={
-			amount:data.amount
-			,market:(action[0]=='market')
-			,pair:data.pair
-			,buy:(action[1]=='buy')
-			,price:data.track[data.track.length-1]
-			};
-		if(action[0]=='limit')
-			order.price=parseFloat(data.action_param);
-		e.order(order,function(error,d){
-			if(error){
-				console.log("order error: "+error);
-				self.notify_user(data.user,uData.tid,"#ORDER #ERROR\n#"+data.pair+" "+error);
-				return;
-			}
-			// console.log(d);
-			self.notify_user(data.user,uData.tid,"#ORDER\n#"+JSON.stringify(d,null,2));
-			global.db.saveTrade({
-				user:data.user
-				,symbol:data.pair
-				,market:data.market
-				,market_id:d.id
-				,type:data.action
-				,amount:data.amount
-				,price:order.price
-				,date:new Date().getTime()
-			});
-		});
+		self.execute_track(data);
 	})
 }
-Tracker.prototype.start=function(market,pair){
+TrackerManager.prototype.execute_track=function(data){
+	var self=this;
+	var action=data.action.split('_');
+	self.notify_user(data.user,"#"+data.action.toUpperCase().replace('_',' #')+"\n#"+data.pair+" "+JSON.stringify(data.track)+"\n📄"+data.comment);
+	if(action[0]=='notify'){
+		return;
+	}
+	var ex=require('./exchanger/'+data.market+'.js');
+	var e=new ex(data.api_data);
+	if(action[0]=='cancel'){
+		e.delete_order(data.action_param);
+		return;
+	}
+	var order={
+		amount:data.amount
+		,market:(action[0]=='market')
+		,pair:data.pair
+		,buy:(action[1]=='buy')
+		,price:data.track[data.track.length-1]
+		};
+	if(action[0]=='limit')
+		order.price=parseFloat(data.action_param);
+	e.order(order,function(error,d){
+		if(error){
+			console.log("order error: "+JSON.stringify(error));
+			self.notify_user(data.user,"#ORDER #ERROR\n#"+data.pair+" "+JSON.stringify(error));
+			return;
+		}
+		// console.log(d);
+		self.notify_user(data.user,"#ORDER\n#"+JSON.stringify(d,null,2));
+		global.db.saveTrade({
+			user:data.user
+			,symbol:data.pair
+			,market:data.market
+			,market_id:d.id
+			,type:data.action
+			,amount:data.amount
+			,price:(order.price)
+			,date:new Date().getTime()
+		});
+	});
+}
+TrackerManager.prototype.start=function(market,pair){
 	var key=this.get_key(market,pair);
 	if(key in this.trackers){
 		return this.trackers[key];
@@ -88,7 +92,7 @@ Tracker.prototype.start=function(market,pair){
 	this.trackers[key].start();
 	return this.trackers[key];
 }
-Tracker.prototype.remove_tracker=function(market,pair,id){
+TrackerManager.prototype.remove_tracker=function(market,pair,id){
 	var key=this.get_key(market,pair);
 	if(!(key in this.trackers)){
 		return true;
@@ -99,7 +103,7 @@ Tracker.prototype.remove_tracker=function(market,pair,id){
 		console.log("Tracker Stopped: "+pair+" @ "+market);
 	}
 }
-Tracker.prototype.add_tracker=function(market,pair,id,track_data,status){
+TrackerManager.prototype.add_tracker=function(market,pair,id,track_data,status){
 	var t=this.start(market,pair);
 	var data=[];
 	for(var i in track_data){
@@ -110,7 +114,7 @@ Tracker.prototype.add_tracker=function(market,pair,id,track_data,status){
 	}
 	t.add_tracker(id,data);
 }
-Tracker.prototype.load_trackers=function(){
+TrackerManager.prototype.load_trackers=function(){
 	var self=this;
 	global.db.getAllTracks(function(error,rows){
 		if(error){
@@ -131,4 +135,4 @@ Tracker.prototype.load_trackers=function(){
 		}
 	});
 }
-module.exports=Tracker;
+module.exports=TrackerManager;

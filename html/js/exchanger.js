@@ -21,7 +21,7 @@ function exchange_balance(api){
 				html+='<br/><b>'+formatPrice(data[i].total*data[i].price.price,0)+' '+data[i].price.capital+'</b>';
 			html+='</td><td>';
 			if(data[i].price)
-				html+=formatPrice(data[i].price.price,0)+'<br/><span class="text-'+(data[i].price.change>0?'success':'danger')+'">'+formatPrice(data[i].price.change,2)+'%</span>';
+				html+=formatPrice(data[i].price.price)+'<br/><span class="text-'+(data[i].price.change>0?'success':'danger')+'">'+formatPrice(data[i].price.change,2)+'%</span>';
 			html+='</td></tr>';
 		}
 		html+='</tbody></table>';

@@ -164,7 +164,7 @@ Exchange.prototype.request=function(uri,method,content,callback,public_api){
 		path: uri
 		,headers:headers
 	};
-	if(content && method=='GET'){
+	if(content && ['GET','DELETE'].indexOf(method)>=0){
 		options.path+="?"+content;
 	}
 	var req = https.request(options, function(res) {

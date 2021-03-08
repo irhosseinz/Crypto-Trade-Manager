@@ -50,7 +50,15 @@ TrackerManager.prototype.execute_track=function(data){
 	var ex=require('./exchanger/'+data.market+'.js');
 	var e=new ex(data.api_data);
 	if(action[0]=='cancel'){
-		e.delete_order(data.action_param);
+		e.delete_order(data.action_param,function(error,d){
+			if(error){
+				console.log("order cancel error: "+JSON.stringify(error));
+				self.notify_user(data.user,"#CANCEL_ORDER #ERROR\n#"+data.pair+" "+JSON.stringify(error));
+				return;
+			}
+			// console.log(d);
+			self.notify_user(data.user,"#CANCEL_ORDER\n#"+JSON.stringify(d,null,2));
+		});
 		return;
 	}
 	var order={

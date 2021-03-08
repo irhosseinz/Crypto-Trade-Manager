@@ -152,6 +152,7 @@ Panel.prototype.open_panel=function(page,data){
 				}
 				if(d.action=='cancel'){
 					d.action_price=data.order_id;
+					// d.action_param=data.order_id;
 				}
 				this.user.add_tracker(d,function(error,id){
 					pData.list=self.user.tracks;
@@ -161,7 +162,7 @@ Panel.prototype.open_panel=function(page,data){
 					}else{
 						self.res.render('panel',pData);
 					}
-					global.manager.execute_track(d);
+					global.manager.add_tracker(d.market,d.pair,id,d.track,0);
 				});
 				return;
 			}else if(data && data.remove){
@@ -223,6 +224,15 @@ Panel.prototype.open_panel=function(page,data){
 								prices[pair].capital='USDT';
 								data[i].price=prices[pair];
 							}
+							data.sort(function(a,b){
+								if(a.price && b.price){
+									return (b.price.price*b.total)-(a.price.price*a.total);
+								}else if(a.price){
+									return -1;
+								}else{
+									return 1;
+								}
+							})
 							self.res.end(JSON.stringify({ok:true,result:data}));
 						}).catch(error=>{
 							console.log(error);
@@ -251,6 +261,15 @@ Panel.prototype.open_panel=function(page,data){
 								}
 								data[i].market=prices[pair];
 							}
+							data.sort(function(a,b){
+								if(a.market && b.market){
+									return (b.market.price*b.amount)-(a.market.price*a.amount);
+								}else if(a.market){
+									return -1;
+								}else{
+									return 1;
+								}
+							})
 							self.res.end(JSON.stringify({ok:true,result:data}));
 						}).catch(error=>{
 							console.log(error);

@@ -1,5 +1,5 @@
 function formatPrice(v,d) {
-	return parseFloat(v).toFixed((typeof d == 'number')?d:4).replace(/\.?0+$/,'');
+	return parseFloat(v).toFixed((typeof d == 'number')?d:4).replace(/\.0+$/,'');
 }
 function exchange_balance(api){
 	$('#modal_action').attr("disabled", true);
@@ -14,9 +14,9 @@ function exchange_balance(api){
 			return;
 		}
 		var data=result.result;
-		var html='<table class="table table-striped"><thead><tr><th scope="col">Symbol</th><th scope="col">Avaiable</th><th scope="col">Total</th><th scope="col">Price</th></tr></thead><tbody>';
+		var html='<table class="table table-striped"><thead><tr><th scope="col"><input type="text" id="symbol_filter" placeholder="Symbol" style="width:100%"/></th><th scope="col">Avaiable</th><th scope="col">Total</th><th scope="col">Price</th></tr></thead><tbody>';
 		for(var i in data){
-			html+='<tr><th scope="row">'+data[i].symbol+'</th><td>'+formatPrice(data[i].available)+'</td><td>'+formatPrice(data[i].total);
+			html+='<tr class="balance_row"><th scope="row">'+data[i].symbol+'</th><td>'+formatPrice(data[i].available)+'</td><td>'+formatPrice(data[i].total);
 			if(data[i].price)
 				html+='<br/><b>'+formatPrice(data[i].total*data[i].price.price,0)+' '+data[i].price.capital+'</b>';
 			html+='</td><td>';
@@ -26,6 +26,18 @@ function exchange_balance(api){
 		}
 		html+='</tbody></table>';
 		$('#modal_body').html(html);
+		$(symbol_filter).keyup(function(){
+			var filter=$(this).val().toUpperCase();
+			console.log(filter+":=");
+			$('.balance_row').each(function(){
+				var symbol=$(this).children()[0].innerText.toUpperCase();
+				if(filter=='' || symbol.indexOf(filter)>=0){
+					$(this).show();
+				}else{
+					$(this).hide();
+				}
+			})
+		})
 	},'json');
 }
 function exchange_orders(api,callback){

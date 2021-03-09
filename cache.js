@@ -7,6 +7,9 @@ module.exports.set=function(category,name,value){
 	global[category][name]=value;
 	global.cached[category+"_"+name]=new Date().getTime();
 }
+module.exports.renew=function(category,name){
+	global.cached[category+"_"+name]=new Date().getTime();
+}
 module.exports.unsetAll=function(category){
 	global[category]={};
 }

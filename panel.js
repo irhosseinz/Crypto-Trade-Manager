@@ -25,6 +25,7 @@ Panel.prototype.authorize=function(cookie){
 	var d=global.cache.get('logins',user);
 	if(dd[1]===d.cookie){
 		this.user=d.user;
+		global.cache.renew('logins',user);
 		return true;
 	}
 	return false;
